@@ -23,7 +23,7 @@ This project having as objectives the design and the realization of a platform o
 ● Update password </br>
 ● Order management </br>
 ● Ingredients management </br>
-<h3>Ingredients management </h3> </br>
+<h3>Ingredient management </h3> </br>
 ● Create ingredient </br>
 ● Update ingredient </br>
 ● Delete ingredient </br>
@@ -31,19 +31,19 @@ This project having as objectives the design and the realization of a platform o
 ● Create client </br>
 ● Update client </br>
 ● Delete client </br>
-<h3>Deliveryman management <h3> </br>
+<h3>Delivery management </h3> </br>
 ● Accept order </br>
 ● Order details </br>
-● Delete client </br>
-<h3>Order management <h3> </br>
+● Delete order </br>
+<h3>Order management </h3> </br>
 ● Create order </br>
 ● Update order </br>
 ● Delete order </br>
-<h3>Shopping cart management <h3> </br>
+<h3>Schopping cart management </h3> </br>
 ● Create item </br>
 ● Update item </br>
 ● Delete item </br>
-<h3>Article management <h3> </br>
+<h3>Article management </h3> </br>
 ● Create article </br>
 ● Update article </br>
 ● Delete article </br>
