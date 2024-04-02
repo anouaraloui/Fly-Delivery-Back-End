@@ -27,7 +27,7 @@ This project having as objectives the design and the realization of a platform o
 ● Create ingredient </br>
 ● Update ingredient </br>
 ● Delete ingredient </br>
-<h3>Client management <h3> </br>
+<h3>Client management </h3> </br>
 ● Create client </br>
 ● Update client </br>
 ● Delete client </br>
