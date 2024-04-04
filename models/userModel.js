@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
+import bcrypt from "bcrypt";
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +10,7 @@ let userSchema= new Schema(
             type: String,
         required: true
         },
-        lasttName: {
+        lastName: {
             type: String,
             required: false
         },
@@ -41,6 +42,16 @@ let userSchema= new Schema(
         }
     }, {timestamps: {currentTime: ()=> Date.now()}, versionKey: false}
 );
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        
+      return next();
+    } 
+    const hash = await bcrypt.hash(this.password, Number(10));
+    this.password = hash;
+    
+    next();
+  });
 
 userSchema.plugin(uniqueValidator);
 

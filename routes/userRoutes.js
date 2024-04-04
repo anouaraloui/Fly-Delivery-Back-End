@@ -1,5 +1,5 @@
 import express from "express";
-import { forgotPassword, login, registerUser, resetpassword } from "../controllers/userControllers.js";
+import {  login,  resetPasswordController, resetPasswordRequestController,  signUpController } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
@@ -7,12 +7,12 @@ const router = express.Router();
 router.post('/auth/login', login);
 
 // Route for forgot password
-router.post('/auth/forgotpassword', forgotPassword);
+router.post('/auth/requestResetPassword', resetPasswordRequestController);
 
 // Route for reset the password
-router.patch('/auth/resetpassword', resetpassword);
+router.patch('/auth/resetPassword', resetPasswordController);
 
 // Route for register a new user
-router.post('/users', registerUser);
+router.post('/users', signUpController);
 
 export default router;

@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
+import { config } from "dotenv";
 
-const urlCompass = "mongodb://localhost:27017/flyDelivery"
+config();
+
+const urlCompass = process.env.URL_COMPASS
 mongoose.set('strictQuery', true);
 
 export const connectDB = () => {
