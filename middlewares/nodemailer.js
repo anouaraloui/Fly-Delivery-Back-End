@@ -19,9 +19,14 @@ const emailForgotPassword = (email, firstName, lastName, token, userId) => {
         subject: "Reset Password",
         html: `<div>
         <h1>Reset Password!</h1>
-        <h2>Hello ${firstName} ${lastName}<h2>
-        <p>Please, click the link below to reset your password<p>
-        <a href=http://localhost:3000/auth/requestResetPassword?token=${token}&id=${userId}/>Reset Password </a>
+        <h2>Hello ${firstName} ${lastName},<h2>
+        <p>Somebody requested a new password for the account associated with your email.</p>
+        <p>No changes have been made to your account yet.</p>
+        <p>You can reset your password by clicking the link below:<p>
+        <a href=http://localhost:3000/auth/requestResetPassword?${token}&${userId}/>Click hier to reset your password </a>
+        <p>If you did not request a new password, please let us know immediately by replying to this email.</p>
+        <p>Yours,</p>
+        <p>The Fly-Delivery team</p>
         </div>
         `
     })
@@ -33,13 +38,15 @@ const emailResetPassword = (email, firstName, lastName) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
-        subject: "Change your FlyDelivery account password",
+        subject: "Password change confirmation",
         html: `<div>
-        <h2> Hi ${firstName} ${lastName}</h2>
+        <h2> Dear ${firstName} ${lastName}</h2>
         <h2>Your password has been changed successfully. </h2>
-        <h2>Welcome back to your application.<h2>     
+        <p>This is to confirm that the password for your account has been successfully changed. Your account is now secured with the new password that you have set.</p>
+        <p>If you did not change your password, please contact us immediately to report any unauthorized access to your account.</p>
+        <p>Thank you for using our service.<p>     
         <p>With best regards<p>
-        <p>Your Fly-Delivery-Team</p>
+        <p>Your Fly-Delivery Team</p>
         `
     })
 };
@@ -56,10 +63,10 @@ const emailResetPassword = (email, firstName, lastName) => {
 //         });
 //         const source = fs.readFileSync(path.join(__dirname, template), "utf8");
 //         const compiledTemplate = handlebars.compile(source);
-        
+
 //         console.log('source: ', source);
 //         console.log('source block');
-        
+
 //         const options = () => {
 //             return {
 //                 from: process.emitnv.EMAIL_FROM,
@@ -79,4 +86,4 @@ const emailResetPassword = (email, firstName, lastName) => {
 // }
 
 
-export { emailForgotPassword, emailResetPassword};
+export { emailForgotPassword, emailResetPassword };

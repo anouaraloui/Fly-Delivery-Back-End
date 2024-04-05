@@ -122,7 +122,7 @@ export const signUpController = async (req, res, next) => {
 // neswUser oder signupService
 export const resetPasswordRequestController = async (req, res, next) => {
     const requestPasswordResetService = await requestPasswordReset(req.body.email);
-    return res.json(requestPasswordResetService);
+    return res.status(200).json({message: "Check your email!", requestPasswordResetService});
 };
 
 export const resetPasswordController = async (req, res, next) => {
@@ -131,6 +131,6 @@ export const resetPasswordController = async (req, res, next) => {
         req.body.token,
         req.body.password
     );
-    return res.json(resetPasswordService);
+    return res.status(200).json({ message: "Your password has been changed successfully.", resetPasswordService});
 };
 
