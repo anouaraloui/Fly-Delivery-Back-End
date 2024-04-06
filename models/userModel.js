@@ -25,7 +25,7 @@ let userSchema= new Schema(
         },
         role: {
             type: String,
-            enum: ['admin', 'restaurant', 'deliveryman', 'client'],
+            enum: ['admin', 'restaurant', 'deliveryman', 'customer'],
             required: true
         },
         phone: {

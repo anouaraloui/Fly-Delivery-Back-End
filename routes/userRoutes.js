@@ -6,7 +6,7 @@ const router = express.Router();
 // Route for login user
 router.post('/auth/login', login);
 
-// Route for forgot password
+// Route for request to reset the password
 router.post('/auth/requestResetPassword', resetPasswordRequestController);
 
 // Route for reset the password

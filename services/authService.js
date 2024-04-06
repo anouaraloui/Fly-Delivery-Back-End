@@ -9,17 +9,7 @@ import crypto from "crypto";
 
 config();
 
-export const register = async (data) => {
-    let user = await User.findOne({ email: data.email });
-  if (user) {
-    throw new Error("Email already exist");
-  }
-  user = new User(data);
-  await user.save();
-  return (data);
-
-};
-
+// Service for request to reset the password
 export const requestPasswordReset = async (email) => {
     const user = await User.findOne({ email });    
     if(!user) throw new Error("User does not exist!");
@@ -35,7 +25,7 @@ export const requestPasswordReset = async (email) => {
     emailForgotPassword(user.email, user.firstName, user.lastName, resetToken, user._id);
 };
 
-
+// Service for reset password
 export const resetPassword = async (userId, token, password) => {
     let passwordResetToken = await Token.findOne({ userId });
     if(!passwordResetToken) throw new Error('Invalid or expired token');
@@ -58,4 +48,13 @@ export const resetPassword = async (userId, token, password) => {
     );
     emailResetPassword(user.email, user.firstName, user.lastName)
     await passwordResetToken.deleteOne();    
+};
+
+//Service for register a new user
+export const register = async (data) => {
+    let user = await User.findOne({ email: data.email });
+  if (user) throw new Error("Email already exist");
+  user = new User(data);
+  await user.save();
+  return (data);
 };
