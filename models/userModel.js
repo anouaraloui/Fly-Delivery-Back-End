@@ -40,16 +40,12 @@ let userSchema= new Schema(
             type: String,
             required: false
         }
-    }, {timestamps: {currentTime: ()=> Date.now()}, versionKey: false}
+    }, {timestamps: true}
 );
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) {
-        
-      return next();
-    } 
-    const hash = await bcrypt.hash(this.password, Number(10));
-    this.password = hash;
-    
+    if (!this.isModified("password")) return next();
+    const hash = await bcrypt.hash(this.password, Number(process.env.BCRYPT_SALT));
+    this.password = hash;    
     next();
   });
 

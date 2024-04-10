@@ -1,11 +1,9 @@
-import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import Token from "../models/tokenModel.js";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import { emailForgotPassword, emailResetPassword } from "../middlewares/nodemailer.js";
 import crypto from "crypto";
-
 
 config();
 
@@ -48,13 +46,4 @@ export const resetPassword = async (userId, token, password) => {
     );
     emailResetPassword(user.email, user.firstName, user.lastName)
     await passwordResetToken.deleteOne();    
-};
-
-//Service for register a new user
-export const register = async (data) => {
-    let user = await User.findOne({ email: data.email });
-  if (user) throw new Error("Email already exist");
-  user = new User(data);
-  await user.save();
-  return (data);
 };

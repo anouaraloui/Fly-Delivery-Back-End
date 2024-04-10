@@ -51,39 +51,23 @@ const emailResetPassword = (email, firstName, lastName) => {
     })
 };
 
-// const sendEmail = async (email, subject, payload, template) => {
 
-//     try {
-//         const transporter = nodemailer.createTransport({
-//             service: process.env.EMAIL_SERVICE,
-//             auth: {
-//                 user: process.env.EMAIL_USERNAME,
-//                 pass: process.env.EMAIL_PASSWORD
-//             }
-//         });
-//         const source = fs.readFileSync(path.join(__dirname, template), "utf8");
-//         const compiledTemplate = handlebars.compile(source);
-
-//         console.log('source: ', source);
-//         console.log('source block');
-
-//         const options = () => {
-//             return {
-//                 from: process.emitnv.EMAIL_FROM,
-//                 to: email,
-//                 subject: subject,
-//                 html: compiledTemplate(payload)
-//             };
-//         };
-
-//         transporter.sendMail(options(), (error, res) => {
-//             if (error) return error;
-//             else return res.status(200).json({ success: true });
-//         });
-//     } catch (error) {
-//         return error;
-//     }
-// }
+const welcome = (email, firstName, lastName) => {
+    transport.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: "Welcome to your application",
+        html: `<div>
+        <h2>Welcome to Fly Delivery! </h2>
+        <h2> Dear ${firstName} ${lastName}</h2>        
+        <p>We wanted to take a moment to welcome you to Fly Delivery. We are excited to have you as a client and appreciate your trust in us.</p>
+        <p>As a new client, you can expect to receive top-notch customer service, high-quality products and services, and timely communication from us. We are committed to meeting and exceeding your expectations.</p>
+        <p>Thank you again for choosing Fly Delivery. We look forward to working with you!<p>     
+        <p>Best,<p>
+        <p>Your Fly-Delivery Team</p>
+        `
+    })
+}
 
 
-export { emailForgotPassword, emailResetPassword };
+export { emailForgotPassword, emailResetPassword, welcome };
