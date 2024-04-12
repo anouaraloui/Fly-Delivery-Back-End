@@ -25,10 +25,10 @@ export const loginController = async (req, res) => {
                     else res.status(200).json({
                         userId: user._id,
                         token: jwt.sign(
-                            { userId: user._id }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }
+                            { userId: user._id, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }
                         ),
                         refreshToken: jwt.sign(
-                            { userId: user._id }, process.env.REFRESH_TOKEN, { expiresIn: '2d' }
+                            { userId: user._id, role: user.role }, process.env.REFRESH_TOKEN, { expiresIn: '2d' }
                         )
                     });
                 })

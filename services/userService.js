@@ -1,5 +1,6 @@
-import User from "../models/userModel.js"
+
 import { welcome } from "../middlewares/nodemailer.js";
+import User from "../models/userModel.js";
 
 //Service for register a new user
 export const register = async (data) => {
@@ -33,3 +34,10 @@ export const userById = (data) => {
     if (!user) throw new Error('Bad request!')
     else return user;
 };
+
+// Service for update password
+export const changePassword = async (data, id) => {
+    
+   const user = await User.findByIdAndUpdate(id, data);
+
+}
