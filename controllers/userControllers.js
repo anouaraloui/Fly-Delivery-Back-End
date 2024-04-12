@@ -3,7 +3,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {  requestPasswordReset, resetPassword } from "../services/passwordService.js";
-import { register, listUsers, userById } from "../services/userService.js";
+import { register, listUsers, userById, changePassword } from "../services/userService.js";
 
 config();
 
@@ -66,4 +66,13 @@ export const getUser = async (req, res) => {
     return res.status(200).json(getUserService);
 }
 
+// Controller for update password
+export const updatePasswordController = async (req, res) => {
+    const updatePasswordService = await changePassword(
+        req.body.password,
+        req.body.newPassword,
+        req.body.confirmPassword,
+        req.body.token);
+        return res.status(200).json({ message: 'Password updated!', updatePasswordService });
 
+}

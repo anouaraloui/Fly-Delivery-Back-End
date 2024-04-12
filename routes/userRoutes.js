@@ -1,5 +1,5 @@
 import express from "express";
-import {   loginController, getUser, listUsersController, resetPasswordController, resetPasswordRequestController,  signUpController } from "../controllers/userControllers.js";
+import {   loginController, getUser, listUsersController, resetPasswordController, resetPasswordRequestController,  signUpController, updatePasswordController } from "../controllers/userControllers.js";
 
 import isAuth from "../middlewares/auth.js";
 import { ValidateRequestRegister, validateRequestPasswordReset } from "../middlewares/requestValidator.js";
@@ -30,7 +30,8 @@ router.get('/users/:id', isAuth, validatorId, (req, res, next) => role(['admin',
 getUser);
 
 //Route for update password
-router.patch('/users/:id', isAuth, validatorId, (req, res, next) => role(['admin', 'restaurant', 'deliveryman', 'customer'], req, res, next)
+router.patch('/users/:id', isAuth, validatorId, (req, res, next) => role(['admin', 'restaurant', 'deliveryman', 'customer'], req, res, next),
+updatePasswordController
 )
 
 export default router;

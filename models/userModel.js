@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 import bcrypt from "bcrypt";
+import { config } from "dotenv";
+config();
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 let userSchema= new Schema(
     {
@@ -51,6 +53,6 @@ userSchema.pre("save", async function (next) {
 
 userSchema.plugin(uniqueValidator);
 
-let User = mongoose.model("users", userSchema);
+const User = mongoose.model("users", userSchema);
 
 export default User;

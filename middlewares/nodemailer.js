@@ -56,18 +56,35 @@ const welcome = (email, firstName, lastName) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
-        subject: "Welcome to your application",
+        subject: "Welcome our application",
         html: `<div>
         <h2>Welcome to Fly Delivery! </h2>
         <h2> Dear ${firstName} ${lastName}</h2>        
         <p>We wanted to take a moment to welcome you to Fly Delivery. We are excited to have you as a client and appreciate your trust in us.</p>
         <p>As a new client, you can expect to receive top-notch customer service, high-quality products and services, and timely communication from us. We are committed to meeting and exceeding your expectations.</p>
         <p>Thank you again for choosing Fly Delivery. We look forward to working with you!<p>     
-        <p>Best,<p>
+        <p>Best regards.<p>
+        <p>Your Fly-Delivery Team</p>
+        `
+    })
+};
+
+const welcomeBack = (email, firstName, lastName) => {
+    transport.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: 'Welcome back to our team',
+        html: `<div>
+        <h2>Welcome back to Fly Delivery! </h2>
+        <h2> Dear ${firstName} ${lastName}</h2>   
+        <p>This is to confirm that the password for your account has been successfully changed. Your account is now secured with the new password that you have set.</p>
+        <p>If you did not change your password, please contact us immediately to report any unauthorized access to your account.</p>
+        <p>Thank you again for choosing Fly Delivery. We look forward to working with you!<p>     
+        <p>Best regards.<p>
         <p>Your Fly-Delivery Team</p>
         `
     })
 }
 
 
-export { emailForgotPassword, emailResetPassword, welcome };
+export { emailForgotPassword, emailResetPassword, welcome, welcomeBack };
