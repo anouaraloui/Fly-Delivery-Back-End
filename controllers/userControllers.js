@@ -3,15 +3,15 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {  requestPasswordReset, resetPassword } from "../services/passwordService.js";
-import { register, listUsers, userById, changePassword, validationAccountService } from "../services/userService.js";
+import { register, listUsers, userById, changePassword, validationAccountClientService } from "../services/userService.js";
 
 config();
 
 // Controller for validation account
-export const validationAccountController = async (req, res) => {
-    const validationService = await validationAccountService(req.body.token)
+export const validationAccountClientController = async (req, res) => {
+    const validationService = await validationAccountClientService(req.body.token)
     return res.status(200).json({message: 'your account is verify now', validationService})
-}
+};
 
 // Controller for Register new user
 export const signUpController = async (req, res, next) => {
@@ -71,7 +71,7 @@ export const listUsersController = async (req, res) => {
 export const getUser = async (req, res) => {
     const getUserService = await userById(req.params.id);
     return res.status(200).json(getUserService);
-}
+};
 
 // Controller for update password
 export const updatePasswordController = async (req, res) => {
@@ -82,4 +82,4 @@ export const updatePasswordController = async (req, res) => {
         req.body.token);
         return res.status(200).json({ message: 'Password updated!', updatePasswordService });
 
-}
+};

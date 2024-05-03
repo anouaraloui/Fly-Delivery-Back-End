@@ -1,5 +1,5 @@
 import express from "express";
-import {   loginController, getUser, listUsersController, resetPasswordController, resetPasswordRequestController,  signUpController, updatePasswordController, validationAccountController } from "../controllers/userControllers.js";
+import {   loginController, getUser, listUsersController, resetPasswordController, resetPasswordRequestController,  signUpController, updatePasswordController, validationAccountClientController} from "../controllers/userControllers.js";
 
 import isAuth from "../middlewares/auth.js";
 import { ValidateRequestRegister, validateRequestPasswordReset } from "../middlewares/requestValidator.js";
@@ -19,7 +19,7 @@ router.post('/auth/requestResetPassword', resetPasswordRequestController);
 router.patch('/auth/resetPassword', validateRequestPasswordReset,resetPasswordController);
 
 // Route for validation a account
-router.patch('/auth/validationAccount', validationAccountController)
+router.patch('/auth/validationAccountClient', validationAccountClientController)
 
 // Route for register a new user
 router.post('/users', ValidateRequestRegister , signUpController);

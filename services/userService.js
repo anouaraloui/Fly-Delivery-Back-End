@@ -7,7 +7,7 @@ config();
 
 
 // Service for validation account
-export const validationAccountService = async (data) => {
+export const validationAccountClientService = async (data) => {
     const decodedToken = jwt.decode(data);
     const userId = decodedToken.userId;
     const verifyUser = await User.findOne({ _id: userId });
@@ -26,7 +26,7 @@ export const validationAccountService = async (data) => {
     };
     welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
 
-}
+};
 
 //Service for register a new user
 export const register = async (data) => {
