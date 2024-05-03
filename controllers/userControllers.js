@@ -3,9 +3,15 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {  requestPasswordReset, resetPassword } from "../services/passwordService.js";
-import { register, listUsers, userById, changePassword } from "../services/userService.js";
+import { register, listUsers, userById, changePassword, validationAccountService } from "../services/userService.js";
 
 config();
+
+// Controller for validation account
+export const validationAccountController = async (req, res) => {
+    const validationService = await validationAccountService(req.body.token)
+    return res.status(200).json({message: 'your account is verify now', validationService})
+}
 
 // Controller for Register new user
 export const signUpController = async (req, res, next) => {
@@ -19,6 +25,7 @@ export const loginController = async (req, res) => {
     User.findOne({ email })
         .then(user => {
             if (!user) return res.status(400).json({ error: "User not found!" });
+            else if(!user.statusAccount) return res.status(400).json({ error: "Your account is not verified" });
             else bcrypt.compare(req.body.password, user.password)
                 .then(validatePassword => {
                     if (!validatePassword) return res.status(401).json({ error: "Incorrect password!" });

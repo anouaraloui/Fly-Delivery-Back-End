@@ -1,5 +1,4 @@
-
-import { welcome, welcomeBack } from "../middlewares/nodemailer.js";
+import { validationAccount, welcome, welcomeBack } from "../middlewares/nodemailer.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -7,13 +6,43 @@ import { config } from "dotenv";
 config();
 
 
+// Service for validation account
+export const validationAccountService = async (data) => {
+    const decodedToken = jwt.decode(data);
+    const userId = decodedToken.userId;
+    const verifyUser = await User.findOne({ _id: userId });
+    if(!verifyUser)  throw new Error('User not found!');
+    else {
+        await User.updateOne(
+            {
+                _id: userId
+            },
+            {
+                $set: {
+                    statusAccount: true
+                }
+            }
+        );
+    };
+    welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+
+}
+
 //Service for register a new user
 export const register = async (data) => {
     let user = await User.findOne({ email: data.email });
     if (user) throw new Error("Email already exist");
     user = new User({ ...data, avatar: data.avatar || '' });
     await user.save();
-    welcome(user.email, user.firstName, user.lastName)
+    const token = jwt.sign(
+        {
+            userId: user._id,
+            role: user.role
+        },
+        process.env.VALIDATION_TOKEN,
+        {expiresIn: '48h'}
+    )
+    validationAccount(user.email, user.firstName, user.lastName, token, user._id)
     return (data);
 };
 

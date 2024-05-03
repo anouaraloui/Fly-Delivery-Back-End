@@ -41,6 +41,10 @@ let userSchema= new Schema(
         avatar: {
             type: String,
             required: false
+        },
+        statusAccount: {
+            type: Boolean,
+            default: false
         }
     }, {timestamps: true}
 );

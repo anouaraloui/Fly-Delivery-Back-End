@@ -84,7 +84,24 @@ const welcomeBack = (email, firstName, lastName) => {
         <p>Your Fly-Delivery Team</p>
         `
     })
+};
+
+const validationAccount = (email, firstName, lastName, token, userId) => {
+    transport.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: 'Validation your account',
+        html: `<div>
+        <h2>Hello ${firstName} ${lastName}</h2>
+        <p>Are you ready to gain access to all of the assets we prepared for clients of Fly Delivery?</p>
+        <p>First, you must complete your registration by clicking on the button below: </p>
+        <a href=http://localhost:3000/auth/validationAccount?${token}&${userId}/>Verify Now</a>
+        <p>This link will verify your account, and then you'll officially be a part of the Fly-Delivery community</p>
+        <p>See you there!<p>
+        <p>Best regards, the Fly-Delivery Team</p>
+        `
+    })
 }
 
 
-export { emailForgotPassword, emailResetPassword, welcome, welcomeBack };
+export { emailForgotPassword, emailResetPassword, welcome, welcomeBack, validationAccount };

@@ -1,4 +1,4 @@
-import "express-async-errors"
+import "express-async-errors";
 import express, { json } from "express";
 import { config } from "dotenv";
 import cors from "cors";
