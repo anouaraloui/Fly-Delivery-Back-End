@@ -2,7 +2,9 @@
     "firstName" : "admin",
     "lastName" : "",
     "email" : "alouianwer21@gmail.com",
+    "password": "#?adminFlyDelivery?#",
     "phone" : "00000000",
     "role" : "admin",
-    "adress": "no actual address"
+    "adress": "no actual address",
+    "statusAccount": true
 }

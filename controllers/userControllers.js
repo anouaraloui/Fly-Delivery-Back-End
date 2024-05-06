@@ -3,21 +3,27 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {  requestPasswordReset, resetPassword } from "../services/passwordService.js";
-import { register, listUsers, userById, changePassword, validationAccountClientService } from "../services/userService.js";
+import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount } from "../services/userService.js";
 
 config();
-
-// Controller for validation account
-export const validationAccountClientController = async (req, res) => {
-    const validationService = await validationAccountClientService(req.body.token)
-    return res.status(200).json({message: 'your account is verify now', validationService})
-};
 
 // Controller for Register new user
 export const signUpController = async (req, res, next) => {
     const signupService = await register(req.body);
     return res.status(201).json({message: "User created",user: signupService});
 };
+
+// Controller for validation account
+export const validationAccountClientController = async (req, res) => {
+    const validationService = await validationAccountClientService(req.body.token)
+    return res.status(200).json({message: 'Your account is verify now', validationService})
+};
+
+// Controller for confirm account Restaurant and Deliveryman
+export const confirmAccountController = async (req, res) => {
+    const confirmAccountService = await confirmAccount(req.params);
+    return res.status(200).json({message: 'Confirm account ', confirmAccountService})
+}
 
 // Controller for login user
 export const loginController = async (req, res) => {

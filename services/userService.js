@@ -12,7 +12,7 @@ export const validationAccountClientService = async (data) => {
     const userId = decodedToken.userId;
     const verifyUser = await User.findOne({ _id: userId });
     if(!verifyUser)  throw new Error('User not found!');
-    else {
+     else if(verifyUser.role === "customer"){
         await User.updateOne(
             {
                 _id: userId
@@ -23,10 +23,28 @@ export const validationAccountClientService = async (data) => {
                 }
             }
         );
-    };
+    } else throw new Error('Admin must confirm your account.')
     welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
 
 };
+
+// Service for confirm account for Restaurant od Deliveryman
+export const confirmAccount = async (id) => {
+    console.log('fdsfs');
+    console.log('id: ', id);
+    const user = await User.findOne({ _id: id });
+    console.log('user : ', user);
+    if(!user) throw new Error('User not found!');
+    else if(user.role != "customer"){
+        await User.findByIdAndUpdate(
+        {_id: id},
+        {$set: {
+            "statusAccount": true
+        }}
+    );
+    };
+    welcome(user.email, user.firstName, user.lastName); 
+}
 
 //Service for register a new user
 export const register = async (data) => {
@@ -42,7 +60,8 @@ export const register = async (data) => {
         process.env.VALIDATION_TOKEN,
         {expiresIn: '48h'}
     )
-    validationAccount(user.email, user.firstName, user.lastName, token, user._id)
+    if(data.role === "customer") {
+        validationAccount(user.email, user.firstName, user.lastName, token, user._id)}
     return (data);
 };
 

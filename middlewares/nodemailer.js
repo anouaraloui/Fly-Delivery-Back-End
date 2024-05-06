@@ -12,6 +12,23 @@ const transport = nodemailer.createTransport({
     }
 })
 
+const welcomeAdmin = (email, firstName, lastName,password) => {
+    transport.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: "Welcome Admin to your application",
+        html: `<div>
+        <h2>Welcome to Fly Delivery! </h2>
+        <h2> Dear ${firstName} ${lastName}</h2> 
+        <p>To can enter in our company, please enter this email and this password :<p>       
+        <p>email: ${email}</p>
+        <p>password: ${password}</p>
+        <p>Best regards.<p>
+        <p>Your Fly-Delivery Team</p>
+        `
+    })
+};
+
 const emailForgotPassword = (email, firstName, lastName, token, userId) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
@@ -104,4 +121,4 @@ const validationAccount = (email, firstName, lastName, token, userId) => {
 }
 
 
-export { emailForgotPassword, emailResetPassword, welcome, welcomeBack, validationAccount };
+export { welcomeAdmin, emailForgotPassword, emailResetPassword, welcome, welcomeBack, validationAccount };

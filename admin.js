@@ -2,15 +2,9 @@ import { connectDB } from "./configuration/connectMondoDB.js";
 import User from "./models/userModel.js";
 import bcrypt from "bcrypt";
 import adminData from "./admin.json" assert { type: "json" };
+import { welcome, welcomeAdmin } from "./middlewares/nodemailer.js";
 
 connectDB();
-
-const charactersPass = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!&$';
-let generatePassword = '';
-for (let i=0; i < 10; i++) {
-    generatePassword += charactersPass.charAt(Math.floor(Math.random() * charactersPass.length));
-};
-const pasword = generatePassword;
 
 const query = User.findOne({ 'role' : 'admin' });
 query.select('role')
@@ -21,13 +15,10 @@ query.exec( (err, res) => {
             console.log('admin is already exist!');
             return process.exit()
         } else {
-            bcrypt.hash(pasword, 10)
-            .then((hashedPassword) => {
-                const admin = new User({...adminData, password: hashedPassword});
-                admin.save();
-                console.log('admin is created');
-            })
-            .catch((err)=> console.log(err))
+            const admin = new User({...adminData});
+            admin.save();
+            welcomeAdmin(admin.email, admin.firstName, admin.lastName, adminData.password);                    
+            console.log('admin is created');
         }
     }
 });
