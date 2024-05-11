@@ -210,6 +210,136 @@
             "description": "Unauthorized"
           }
         }
+      },
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Get the list of all users",
+        "description": "Get the list of all users",
+        "operationId": "ListUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "createdAtBefore",
+            "in": "query",
+            "description": "Filter users created before this date (YYYY-MM-DD format)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "createdAtAfter",
+            "in": "query",
+            "description": "Filter users created after this date (YYYY-MM-DD format)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "succussffully operation ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalUsers": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "users": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "_id": "string",
+                          "firstName": "string",
+                          "lastName": "string",
+                          "email": "exemple@email.com",
+                          "phone": "00 000 000",
+                          "role": "customer",
+                          "avatar": "string",
+                          "statusAccount": true,
+                          "adress": "string"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request "
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }      
+    },
+    "/users/validationAccountClinet": {
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Validation account client.",
+        "description": "Validation account client.",
+        "operationId": "VvalidationAccountClinet",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful validation account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found !"
+          }
+        }
       }
     }
   },
