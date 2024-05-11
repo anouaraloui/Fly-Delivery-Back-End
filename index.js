@@ -4,6 +4,8 @@ import { config } from "dotenv";
 import cors from "cors";
 import { connectDB } from "./configuration/connectMondoDB.js";
 import userRoutes from './routes/userRoutes.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.json' assert { type: "json" };
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.use(express.json())
 config();
 connectDB();
 
+app.use('/api-swagger-test', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(userRoutes);
 
 app.use((error, req, res, next) => {

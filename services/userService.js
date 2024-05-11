@@ -11,8 +11,8 @@ export const validationAccountClientService = async (data) => {
     const decodedToken = jwt.decode(data);
     const userId = decodedToken.userId;
     const verifyUser = await User.findOne({ _id: userId });
-    if(!verifyUser)  throw new Error('User not found!');
-     else if(verifyUser.role === "customer"){
+    if (!verifyUser) throw new Error('User not found!');
+    else if (verifyUser.role === "Customer") {
         await User.updateOne(
             {
                 _id: userId
@@ -30,21 +30,22 @@ export const validationAccountClientService = async (data) => {
 
 // Service for confirm account for Restaurant od Deliveryman
 export const confirmAccount = async (id) => {
-    console.log('fdsfs');
-    console.log('id: ', id);
-    const user = await User.findOne({ _id: id });
+    console.log("id from userService:", id);
+    const user = await User.findOne({ id });
     console.log('user : ', user);
-    if(!user) throw new Error('User not found!');
-    else if(user.role != "customer"){
+    if (!user) throw new Error('User not found!');
+    else if (user.role != "Customer") {
         await User.findByIdAndUpdate(
-        {_id: id},
-        {$set: {
-            "statusAccount": true
-        }}
-    );
+            { _id: id },
+            {
+                $set: {
+                    "statusAccount": true
+                }
+            }
+        );
+        welcome(user.email, user.firstName, user.lastName);
     };
-    welcome(user.email, user.firstName, user.lastName); 
-}
+};
 
 //Service for register a new user
 export const register = async (data) => {
@@ -58,10 +59,11 @@ export const register = async (data) => {
             role: user.role
         },
         process.env.VALIDATION_TOKEN,
-        {expiresIn: '48h'}
+        { expiresIn: '48h' }
     )
-    if(data.role === "customer") {
-        validationAccount(user.email, user.firstName, user.lastName, token, user._id)}
+    if (data.role === "Customer") {
+        validationAccount(user.email, user.firstName, user.lastName, token, user._id)
+    }
     return (data);
 };
 
@@ -81,6 +83,23 @@ export const listUsers = async (data) => {
     else throw new Error('Users not found!')
 };
 
+//Service for get all users unvalidated with role " Restaurant & Deliveryman"
+export const listUsersUnvalidated = async (data) => {
+    if (!data.page) data.page = 1;
+    if (!data.limit) data.limit = 30;
+    const skipPage = (data.page - 1) * data.limit;
+    const usersList = await User.find({ role: ["Restaurant", "Deliveryman"], statusAccount: false })
+        .sort({ [data.sortBy]: 1 })
+        .skip(skipPage)
+        .limit(data.limit)
+        .where('cratedAt').lt(data.createdAtBefore).gt(data.createdAtAfter)
+        .select('-password')
+        .exec()
+    const countList = await User.countDocuments({ role: ["Restaurant", "Deliveryman"], statusAccount: false });
+    if (usersList) return { page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
+    else throw new Error('Users not found!')
+};
+
 // Service for get one user
 export const userById = (data) => {
     const user = User.find({ _id: data }).select('-password')
@@ -89,7 +108,7 @@ export const userById = (data) => {
 };
 
 // Service for update password
-export const changePassword = async (password, newPassword,confirmPassword, token) => {
+export const changePassword = async (password, newPassword, confirmPassword, token) => {
     const decoded = jwt.decode(token);
     const idUser = decoded.userId;
     const user = await User.findOne({ _id: idUser });
@@ -122,11 +141,5 @@ export const changePassword = async (password, newPassword,confirmPassword, toke
                 throw new Error(err)
             })
 
-    }
-    //const acctualPassword = data.password;
-    //bcrypt.compare(acctualPassword, User)
-    //    const user = await User.find();
-    //    console.log('user: ', user);
-    //    return user;
-
-}
+    };
+};

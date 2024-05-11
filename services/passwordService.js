@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import { emailForgotPassword, emailResetPassword } from "../middlewares/nodemailer.js";
 import crypto from "crypto";
+import jwt from 'jsonwebtoken';
 
 config();
 

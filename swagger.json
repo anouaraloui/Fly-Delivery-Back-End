@@ -1,0 +1,294 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Fly Delivery",
+    "description": "This application offers a seamless and convenient way to satisfy your cravings with just a few clicks. Fly-Delivery connects you with a wide range of restaurants and cuisines, bringing delicious meals straight to your doorstep."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4444/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authorization Users"
+    },
+    {
+      "name": "users",
+      "description": "Operations for Users"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login user",
+        "description": "Login user",
+        "operationId": "LoginUser",
+        "requestBody": {
+          "description": "Login user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "404": {
+            "description": "User not found !"
+          },
+          "401": {
+            "description": "Incorrect password !"
+          },
+          "400": {
+            "description": "error"
+          }
+        },
+        "required": true
+      }
+    },
+    "/auth/requestResetPassword": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Request reset password user",
+        "description": "send request to reset password",
+        "operationId": "requestPassword",
+        "requestBody": {
+          "description": "Request reset password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Please check your email for reset your password!"
+          },
+          "404": {
+            "description": "User not exist !"
+          }
+        }
+      }
+    },
+    "/auth/resetPassword": {
+      "patch": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reset user Password",
+        "description": "Reset user Password",
+        "operationId": "ResetUserPassword",
+        "requestBody": {
+          "description": "Reset user Password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "example": "110eb998dfcbe64e756ac4c4"
+                  },
+                  "token": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "password updated"
+          },
+          "404": {
+            "description": "User not found!"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Register new user",
+        "description": "Register new user",
+        "operationId": "regsterNewUser",
+        "requestBody": {
+          "description": "Register new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "exemple"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "exemple"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "exemple@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "*******"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "Customer"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "00 000 000"
+                  },
+                  "adress": {
+                    "type": "string",
+                    "example": "example"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "example": "example"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json":{
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "role",
+          "phone",
+          "adress",
+          "avatar",
+          "statusAccount"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "exemple"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "exemple"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "exemple@email.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "*******"
+          },
+          "role": {
+            "type": "string",
+            "example": "Customer",
+            "enum": [
+              "Restaurant",
+              "Deliveryman",
+              "Customer"
+            ]
+          },
+          "phone": {
+            "type": "string",
+            "example": "00 000 000"
+          },
+          "adress": {
+            "type": "string",
+            "example": "example"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "example"
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "User": {
+        "description": "List of user object",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header"
+      }
+    }
+  }
+}
