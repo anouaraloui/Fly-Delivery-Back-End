@@ -310,24 +310,177 @@
         }
       }      
     },
-    "/users/validationAccountClinet": {
+    "/users/validationAccountClient": {
       "patch": {
         "tags": [
           "users"
         ],
-        "summary": "Validation account client.",
+        "summary": "Validation account client",
         "description": "Validation account client.",
-        "operationId": "VvalidationAccountClinet",
+        "operationId": "ValidationAccountClinet",
+        "requestBody": {
+          "description": "Validated your account.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful validation account."
+          },
+          "404": {
+            "description": "User not found !"
+          }
+        }
+      }
+    },
+    "/users/confirmAccount/{id}": {
+      "patch": {
+        
+      "security": [
+        {
+          "Bearer": []
+        }
+      ],
+      "tags": [
+        "users"
+      ],
+      "summary": "Confirm account Restaurant & Deliveryman",
+      "description": "Confirm account Restaurant & Deliveryman.",
+      "operationId": "confirmAccount",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful operation"
+        },
+        "401": {
+          "description": "Invalid request"
+        }, 
+        "403": {
+          "description": "Access denied!"
+        }
+
+      }
+      
+    }
+    },
+    "/users/request": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Get the list of all users unvalidated",
+        "description": "Get the list of all users unvalidated.",
+        "operationId": "listUsersUnvalidated",
         "parameters": [
           {
-            "name": "token",
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "succussffully operation ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalUsers": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "users": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "_id": "string",
+                          "firstName": "string",
+                          "lastName": "string",
+                          "email": "exemple@email.com",
+                          "phone": "00 000 000",
+                          "role": "customer",
+                          "avatar": "string",
+                          "statusAccount": false,
+                          "adress": "string"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Display user profile",
+        "description": "Display user profile",
+        "operationId": "DisplayUserProfile",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful validation account.",
+          "201": {
+            "description": "successful operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -336,8 +489,73 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Change user password",
+        "description": "Change user password",
+        "operationId": "changeUserPassword",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Change user password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "example": "token"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "actualPassword"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "newPassword"
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "example": "newPassword"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password has been changed"
+          },
+          "400": {
+            "description": "Bad request "
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
           "404": {
-            "description": "User not found !"
+            "description": "User not exist !"
           }
         }
       }

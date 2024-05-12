@@ -30,9 +30,7 @@ export const validationAccountClientService = async (data) => {
 
 // Service for confirm account for Restaurant od Deliveryman
 export const confirmAccount = async (id) => {
-    console.log("id from userService:", id);
     const user = await User.findOne({ id });
-    console.log('user : ', user);
     if (!user) throw new Error('User not found!');
     else if (user.role != "Customer") {
         await User.findByIdAndUpdate(
@@ -63,6 +61,7 @@ export const register = async (data) => {
     )
     if (data.role === "Customer") {
         validationAccount(user.email, user.firstName, user.lastName, token, user._id)
+        console.log("token for validation account: ", token);
     }
     return (data);
 };
@@ -78,6 +77,7 @@ export const listUsers = async (data) => {
         .limit(data.limit)
         .where('cratedAt').lt(data.createdAtBefore).gt(data.createdAtAfter)
         .select('-password')
+        .exec();
     const countList = await User.countDocuments();
     if (usersList) return { page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
     else throw new Error('Users not found!')
@@ -89,12 +89,10 @@ export const listUsersUnvalidated = async (data) => {
     if (!data.limit) data.limit = 30;
     const skipPage = (data.page - 1) * data.limit;
     const usersList = await User.find({ role: ["Restaurant", "Deliveryman"], statusAccount: false })
-        .sort({ [data.sortBy]: 1 })
         .skip(skipPage)
         .limit(data.limit)
-        .where('cratedAt').lt(data.createdAtBefore).gt(data.createdAtAfter)
         .select('-password')
-        .exec()
+        .exec();
     const countList = await User.countDocuments({ role: ["Restaurant", "Deliveryman"], statusAccount: false });
     if (usersList) return { page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
     else throw new Error('Users not found!')
@@ -109,37 +107,46 @@ export const userById = (data) => {
 
 // Service for update password
 export const changePassword = async (password, newPassword, confirmPassword, token) => {
+    try {
+        const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN)
+        if(verifyToken)  console.log("verify token: ", verifyToken);
+    const idUserVeried = verifyToken.userId
+    console.log("id User Verified: ", idUserVeried);
     const decoded = jwt.decode(token);
+    console.log("decoded : ", decoded);
     const idUser = decoded.userId;
-    const user = await User.findOne({ _id: idUser });
-    if (!user) throw new Error('User not found!');
-    else {
-        const acctualPassword = user.password;
-        bcrypt.compare(password, acctualPassword)
-            .then(async (isValid) => {
-                if (!isValid) throw new Error('Password is not correct!');
-                else {
-                    bcrypt.compare(newPassword, confirmPassword)
-                        .then(async (passConfirm) => {
-                            if (!passConfirm) throw new Error('Password is not confirm')
-                            else {
-                                const password = bcrypt.hash(password, process.env.BCRYPT_SALT);
-                                await User.updateOne(
-                                    { _id: idUser },
-                                    {
-                                        $set: {
-                                            password: password
-                                        }
-                                    }
-                                );
-                            }
-                        })
-                    welcomeBack(user.email, user.firstName, user.lastName);
+    console.log("user Id: ", idUser);
+    // const user = await User.findOne({ _id: idUser });
+    // if (!user) throw new Error('User not found!');
+    // else {
+    //     const acctualPassword = user.password;
+    //     bcrypt.compare(password, acctualPassword)
+    //         .then(async (isValid) => {
+    //             if (!isValid) throw new Error('Password is not correct!');
+    //             else {
+    //                 bcrypt.compare(newPassword, confirmPassword)
+    //                     .then(async (passConfirm) => {
+    //                         if (!passConfirm) throw new Error('Password is not confirm')
+    //                         else {
+    //                             const password = bcrypt.hash(password, process.env.BCRYPT_SALT);
+    //                             await User.updateOne(
+    //                                 { _id: idUser },
+    //                                 {
+    //                                     $set: {
+    //                                         password: password
+    //                                     }
+    //                                 }
+    //                             );
+    //                         }
+    //                     })
+    //                 welcomeBack(user.email, user.firstName, user.lastName);
 
-                }
-            }).catch(err => {
-                throw new Error(err)
-            })
-
-    };
+    //             }
+    //         }).catch(err => {
+    //             throw new Error(err)
+    //         });
+    // };
+} catch (error) {
+        
+    }
 };

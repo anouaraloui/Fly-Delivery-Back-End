@@ -39,7 +39,7 @@ router.get('/users/:id', isAuth, validatorId, (req, res, next) => role(['Admin',
 getUser);
 
 //Route for update password
-router.patch('/users/:id', isAuth, validatorId, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
+router.patch('/users', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
 updatePasswordController
 )
 
