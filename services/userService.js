@@ -106,47 +106,40 @@ export const userById = (data) => {
 };
 
 // Service for update password
-export const changePassword = async (password, newPassword, confirmPassword, token) => {
+export const changePassword = async (lastPassword, newPassword, confirmPassword, token) => {
     try {
-        const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN)
-        if(verifyToken)  console.log("verify token: ", verifyToken);
-    const idUserVeried = verifyToken.userId
-    console.log("id User Verified: ", idUserVeried);
-    const decoded = jwt.decode(token);
-    console.log("decoded : ", decoded);
-    const idUser = decoded.userId;
-    console.log("user Id: ", idUser);
-    // const user = await User.findOne({ _id: idUser });
-    // if (!user) throw new Error('User not found!');
-    // else {
-    //     const acctualPassword = user.password;
-    //     bcrypt.compare(password, acctualPassword)
-    //         .then(async (isValid) => {
-    //             if (!isValid) throw new Error('Password is not correct!');
-    //             else {
-    //                 bcrypt.compare(newPassword, confirmPassword)
-    //                     .then(async (passConfirm) => {
-    //                         if (!passConfirm) throw new Error('Password is not confirm')
-    //                         else {
-    //                             const password = bcrypt.hash(password, process.env.BCRYPT_SALT);
-    //                             await User.updateOne(
-    //                                 { _id: idUser },
-    //                                 {
-    //                                     $set: {
-    //                                         password: password
-    //                                     }
-    //                                 }
-    //                             );
-    //                         }
-    //                     })
-    //                 welcomeBack(user.email, user.firstName, user.lastName);
+        const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN);
+        const idUserVerified = verifyToken.userId;
+        const user = await User.findOne({ _id: idUserVerified });
+        if (!user) throw new Error('User not found!');
+        else {
+            const acctualPassword = user.password;
+            bcrypt.compare(lastPassword, acctualPassword)
+                .then(async (isValid) => {
+                    if (!isValid) throw new Error('Current password is not correct!');
+                    else {
+                        const comparePassword = newPassword.localeCompare(confirmPassword)
+                        if (comparePassword != 0) throw new Error('Password is not confirm')
+                        else {
+                            const hashedPassword = bcrypt.hash(newPassword, process.env.BCRYPT_SALT);
+                            await User.updateOne(
+                                { _id: idUserVerified },
+                                {
+                                    $set: {
+                                        password: hashedPassword
+                                    }
+                                }
+                            );
+                            welcomeBack(user.email, user.firstName, user.lastName);
+                        }
+                    }
+                }).catch(err => {
+                    throw new Error(err)
+                });
 
-    //             }
-    //         }).catch(err => {
-    //             throw new Error(err)
-    //         });
-    // };
-} catch (error) {
-        
+
+        }
+    } catch (error) {
+
     }
 };
