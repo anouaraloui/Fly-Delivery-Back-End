@@ -116,12 +116,13 @@ export const changePassword = async (lastPassword, newPassword, confirmPassword,
             const acctualPassword = user.password;
             bcrypt.compare(lastPassword, acctualPassword)
                 .then(async (isValid) => {
+                    console.log("is valid: ", isValid);
                     if (!isValid) throw new Error('Current password is not correct!');
                     else {
-                        const comparePassword = newPassword.localeCompare(confirmPassword)
-                        if (comparePassword != 0) throw new Error('Password is not confirm')
+                        const comparePassword = newPassword.localeCompare(confirmPassword);
+                        if (comparePassword != 0) throw new Error('Password is not confirm');
                         else {
-                            const hashedPassword = bcrypt.hash(newPassword, process.env.BCRYPT_SALT);
+                            const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
                             await User.updateOne(
                                 { _id: idUserVerified },
                                 {
@@ -131,15 +132,13 @@ export const changePassword = async (lastPassword, newPassword, confirmPassword,
                                 }
                             );
                             welcomeBack(user.email, user.firstName, user.lastName);
-                        }
-                    }
+                        };
+                    };
                 }).catch(err => {
                     throw new Error(err)
                 });
-
-
-        }
+        };
     } catch (error) {
-
+        throw new Error(error);
     }
 };

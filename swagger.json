@@ -308,6 +308,9 @@
             "description": "Unauthorized"
           }
         }
+      },
+      "patch": {
+        
       }      
     },
     "/users/validationAccountClient": {

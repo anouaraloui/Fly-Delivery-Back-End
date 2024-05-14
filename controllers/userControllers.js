@@ -93,7 +93,7 @@ export const getUser = async (req, res) => {
 export const updatePasswordController = async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const updatePasswordService = await changePassword(
-        req.body.password,
+        req.body.lastPassword,
         req.body.newPassword,
         req.body.confirmPassword,
         token);
