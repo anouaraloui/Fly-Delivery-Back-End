@@ -45,7 +45,7 @@ const emailForgotPassword = (email, firstName, lastName, token, userId) => {
         <p>Somebody requested a new password for the account associated with your email.</p>
         <p>No changes have been made to your account yet.</p>
         <p>You can reset your password by clicking the link below:<p>
-        <a href=http://localhost:3000/auth/requestResetPassword?${token}&${userId}/>Click hier to reset your password </a>
+        <a href=http://localhost:3000/auth/requestResetPassword?token=${token}&id=${userId}/>Click hier to reset your password </a>
         <p>If you did not request a new password, please let us know immediately by replying to this email.</p>
         <p>Yours,</p>
         <p>The Fly-Delivery team</p>

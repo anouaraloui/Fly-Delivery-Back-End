@@ -26,12 +26,14 @@ export const requestPasswordReset = async (email) => {
 
 // Service for reset password
 export const resetPassword = async (userId, token, password) => {
+    try {
+    
     let passwordResetToken = await Token.findOne({ userId });
-    if(!passwordResetToken) throw new Error('Invalid or expired token');
+    if(!passwordResetToken) throw new Error('Request user not exist!');
     const isValid = await bcrypt.compare(token, passwordResetToken.token);
-    if(!isValid) throw new Error('Invalid or expired token');
+    if(!isValid) throw new Error('Invalid token!');
     const user = await User.findById({ _id: userId });
-    const oldPassword = await bcrypt.compare(password, user.password)
+    const oldPassword = await bcrypt.compare(password, user.password);
     if(oldPassword) throw new Error('You have entered an actual password. Please enter a new password or log in again using the same password.');
     const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
     await User.updateOne(
@@ -44,7 +46,10 @@ export const resetPassword = async (userId, token, password) => {
         {
             new: true
         }
-    );
-    emailResetPassword(user.email, user.firstName, user.lastName)
-    await passwordResetToken.deleteOne();    
+    );    
+    emailResetPassword(user.email, user.firstName, user.lastName);
+    await passwordResetToken.deleteOne();      
+} catch (error) {
+    throw Error(error)
+}  
 };

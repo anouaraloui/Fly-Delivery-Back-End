@@ -18,7 +18,11 @@ router.post('/auth/requestResetPassword', resetPasswordRequestController);
 router.patch('/auth/resetPassword', validateRequestPasswordReset,resetPasswordController);
 
 // Route for register a new user
-router.post('/users', ValidateRequestRegister , signUpController);
+router.post('/users', ValidateRequestRegister , signUpController)
+
+// Route for get all users
+.get('/users', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
+listUsersController);
 
 // Route for validation a account
 router.patch('/users/validationAccountClient', validationAccountClientController)
@@ -26,10 +30,6 @@ router.patch('/users/validationAccountClient', validationAccountClientController
 // Route for confirm account Restaurant und Deliveryman
 router.patch('/users/confirmAccount/:id', isAuth, validatorId, (req, res, next) => role(['Admin'], req, res, next),
 confirmAccountController)
-
-// Route for get all users
-router.get('/users', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
-listUsersController);
 
 // Route for get all users unvalidated with role "Restaurant & Deliveryman"
 router.get('/users/request', isAuth, (req, res, next) => role(['Admin'], req, res, next),listUsersUnvalidatedController);
@@ -39,7 +39,7 @@ router.get('/users/:id', isAuth, validatorId, (req, res, next) => role(['Admin',
 getUser);
 
 //Route for update password
-router.patch('/users', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
+router.patch('/users/password/change', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
 updatePasswordController
 )
 

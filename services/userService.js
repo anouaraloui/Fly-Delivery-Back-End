@@ -8,10 +8,13 @@ config();
 
 // Service for validation account
 export const validationAccountClientService = async (data) => {
-    const decodedToken = jwt.decode(data);
+    try {        
+    const err = new Error('Admin must confirm your account.')
+    const decodedToken = jwt.verify(data, process.env.VALIDATION_TOKEN);
     const userId = decodedToken.userId;
     const verifyUser = await User.findOne({ _id: userId });
     if (!verifyUser) throw new Error('User not found!');
+    if(verifyUser.statusAccount == true) throw new Error('Your account is validated')
     else if (verifyUser.role === "Customer") {
         await User.updateOne(
             {
@@ -23,8 +26,11 @@ export const validationAccountClientService = async (data) => {
                 }
             }
         );
-    } else throw new Error('Admin must confirm your account.')
-    welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+    } else err;
+    //welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+    } catch (error) {
+        console.log(error);
+    }
 
 };
 
@@ -106,17 +112,16 @@ export const userById = (data) => {
 };
 
 // Service for update password
-export const changePassword = async (lastPassword, newPassword, confirmPassword, token) => {
+export const changePassword = async (actualPassword , newPassword, confirmPassword, token) => {
     try {
         const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN);
         const idUserVerified = verifyToken.userId;
         const user = await User.findOne({ _id: idUserVerified });
         if (!user) throw new Error('User not found!');
         else {
-            const acctualPassword = user.password;
-            bcrypt.compare(lastPassword, acctualPassword)
+            const userPassword = user.password;
+            bcrypt.compare(actualPassword , userPassword)
                 .then(async (isValid) => {
-                    console.log("is valid: ", isValid);
                     if (!isValid) throw new Error('Current password is not correct!');
                     else {
                         const comparePassword = newPassword.localeCompare(confirmPassword);
@@ -131,14 +136,14 @@ export const changePassword = async (lastPassword, newPassword, confirmPassword,
                                     }
                                 }
                             );
-                            welcomeBack(user.email, user.firstName, user.lastName);
+                            //welcomeBack(user.email, user.firstName, user.lastName);
                         };
                     };
                 }).catch(err => {
-                    throw new Error(err)
+                    new Error(err)
                 });
         };
     } catch (error) {
-        throw new Error(error);
+        new Error(error);
     }
 };

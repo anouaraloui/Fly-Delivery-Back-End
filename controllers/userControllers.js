@@ -10,21 +10,23 @@ config();
 // Controller for Register new user
 export const signUpController = async (req, res, next) => {
     const signupService = await register(req.body);
-    return res.status(201).json({ message: "User created", user: signupService });
+    if(signupService) return res.status(201).json({ message: "User created", user: signupService });
+    else return res.status(400).json({ message: 'Bad request!'});
 };
 
 // Controller for validation account
 export const validationAccountClientController = async (req, res) => {
-    const validationService = await validationAccountClientService(req.body.token)
+    const validationService = await validationAccountClientService(req.body.token);
     return res.status(200).json({ message: 'Your account is verify now', validationService })
-};
+     
+    };
 
 // Controller for confirm account Restaurant and Deliveryman
 export const confirmAccountController = async (req, res) => {
-    const {id} = req.params
+    const {id} = req.params;
     const confirmAccountService = await confirmAccount(id);
-    console.log("id from user Controller:", id);
-    return res.status(200).json({ message: 'Confirm account ', confirmAccountService })
+    return res.status(200).json({ message: 'Confirm account ', confirmAccountService });
+    
 }
 
 // Controller for login user
@@ -59,15 +61,12 @@ export const resetPasswordRequestController = async (req, res, next) => {
 };
 
 // Controller for password reset
-export const resetPasswordController = async (req, res, next) => {
+export const resetPasswordController = async (req, res) => {
     const resetPasswordService = await resetPassword(
         req.body.userId,
         req.body.token,
         req.body.password
-
-
     );
-    next();
     return res.status(200).json({ message: "Your password has been changed successfully.", resetPasswordService });
 };
 
@@ -93,10 +92,10 @@ export const getUser = async (req, res) => {
 export const updatePasswordController = async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const updatePasswordService = await changePassword(
-        req.body.lastPassword,
+        req.body.actualPassword,
         req.body.newPassword,
         req.body.confirmPassword,
         token);
-    return res.status(200).json({ message: 'Password updated!', updatePasswordService });
-
+    if(updatePasswordService) return res.status(200).json({ message: 'Password updated!', updatePasswordService });
+    else return res.status(400).json({ message: 'Bad Request!', updatePasswordService });
 };

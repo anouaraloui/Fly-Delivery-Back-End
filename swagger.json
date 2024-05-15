@@ -193,7 +193,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful operation",
             "content": {
               "application/json":{
@@ -308,10 +308,7 @@
             "description": "Unauthorized"
           }
         }
-      },
-      "patch": {
-        
-      }      
+      }     
     },
     "/users/validationAccountClient": {
       "patch": {
@@ -499,7 +496,9 @@
             "description": "Unauthorized"
           }
         }
-      },
+      }
+    },
+    "/users/password/change": {      
       "patch": {
         "security": [
           {
@@ -512,13 +511,6 @@
         "summary": "Change user password",
         "description": "Change user password",
         "operationId": "changeUserPassword",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
         "requestBody": {
           "description": "Change user password",
           "content": {
@@ -526,11 +518,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "token": {
-                    "type": "string",
-                    "example": "token"
-                  },
-                  "password": {
+                  "actualPassword": {
                     "type": "string",
                     "example": "actualPassword"
                   },
