@@ -18,6 +18,7 @@ export const ValidateRequestRegister = [
         .isMobilePhone('ar-TN'),
     body('adress').optional(),
     body('avatar').optional(),
+    body('validationCode').optional(),
 
     (req, res, next) => {
         const errors = validationResult(req);

@@ -10,8 +10,11 @@ config();
 export const validationAccountClientService = async (data) => {
     try {        
     const err = new Error('Admin must confirm your account.')
+    console.log("data :", data);
     const decodedToken = jwt.verify(data, process.env.VALIDATION_TOKEN);
-    const userId = decodedToken.userId;
+    if(!decodedToken) throw new Error("Invalid signatur!")
+    const userId = await decodedToken.userId;
+    console.log("user id: ", userId);
     const verifyUser = await User.findOne({ _id: userId });
     if (!verifyUser) throw new Error('User not found!');
     if(verifyUser.statusAccount == true) throw new Error('Your account is validated')
@@ -26,10 +29,11 @@ export const validationAccountClientService = async (data) => {
                 }
             }
         );
+        // Compare code Validation with token.validationCode
     } else err;
     //welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
     } catch (error) {
-        console.log(error);
+        Error(error)
     }
 
 };
@@ -53,22 +57,31 @@ export const confirmAccount = async (id) => {
 
 //Service for register a new user
 export const register = async (data) => {
+    const charactersCode = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let generateCode = '';
+    for (let i = 0; i < 20; i++) {
+        generateCode += charactersCode.charAt(Math.floor(Math.random() * charactersCode.length))
+    };
+    const codeValidationAccount = generateCode;
     let user = await User.findOne({ email: data.email });
     if (user) throw new Error("Email already exist");
-    user = new User({ ...data, avatar: data.avatar || '' });
-    await user.save();
-    const token = jwt.sign(
+    user = new User({ ...data, avatar: data.avatar || '' , validationCode: codeValidationAccount});
+    
+    const token =  jwt.sign(
         {
             userId: user._id,
-            role: user.role
+            role: user.role,
+            codeValidation: codeValidationAccount
         },
-        process.env.VALIDATION_TOKEN,
-        { expiresIn: '48h' }
-    )
+        'secret',        
+        { expiresIn: '48h' },
+        process.env.VALIDATION_TOKEN
+    );
     if (data.role === "Customer") {
-        validationAccount(user.email, user.firstName, user.lastName, token, user._id)
+        // validationAccount(user.email, user.firstName, user.lastName, token, user._id)
         console.log("token for validation account: ", token);
     }
+    await user.save();
     return (data);
 };
 

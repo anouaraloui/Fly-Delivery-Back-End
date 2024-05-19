@@ -16,8 +16,16 @@ export const signUpController = async (req, res, next) => {
 
 // Controller for validation account
 export const validationAccountClientController = async (req, res) => {
-    const validationService = await validationAccountClientService(req.body.token);
-    return res.status(200).json({ message: 'Your account is verify now', validationService })
+   
+    try {
+         const validationService = await validationAccountClientService(req.body.token);
+         if(validationService) return res.status(200).json({ message: 'Your account is verify now', validationService })
+        else return res.status(400).json({ message: 'Bad request!', validationService })
+    } catch (error) {
+        console.log(error);
+    }
+    
+    
      
     };
 

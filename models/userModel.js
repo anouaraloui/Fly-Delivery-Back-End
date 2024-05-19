@@ -42,6 +42,10 @@ let userSchema= new Schema(
             type: String,
             required: false
         },
+        validationCode: {
+            type: String,
+            required: false
+        } ,
         statusAccount: {
             type: Boolean,
             default: false
