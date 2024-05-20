@@ -3,38 +3,47 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+
 config();
 
 
 // Service for validation account
-export const validationAccountClientService = async (data) => {
-    try {        
-    const err = new Error('Admin must confirm your account.')
-    console.log("data :", data);
-    const decodedToken = jwt.verify(data, process.env.VALIDATION_TOKEN);
-    if(!decodedToken) throw new Error("Invalid signatur!")
-    const userId = await decodedToken.userId;
-    console.log("user id: ", userId);
-    const verifyUser = await User.findOne({ _id: userId });
-    if (!verifyUser) throw new Error('User not found!');
-    if(verifyUser.statusAccount == true) throw new Error('Your account is validated')
-    else if (verifyUser.role === "Customer") {
-        await User.updateOne(
-            {
-                _id: userId
-            },
-            {
-                $set: {
-                    statusAccount: true
-                }
-            }
-        );
-        // Compare code Validation with token.validationCode
-    } else err;
-    //welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
-    } catch (error) {
-        Error(error)
+export const validationAccountClientService = async (token) => {
+    const verifyToken = (data) => {
+        try {
+            const decodedVerified = jwt.verify(token, process.env.VALIDATION_TOKEN);
+
+            return { success: true, dataToken: decodedVerified }
+        } catch (error) {
+            return { success: false, error: error.message }
+        }
     }
+
+    const resultVerify = verifyToken(token)
+    if(!resultVerify.success) return  new Error ('invalid signatur')
+        else return console.log('great');
+
+    // console.log('decoded: ', decodedToken);
+    // const userId = await decodedToken.userId;
+    // console.log("user id: ", userId);
+    // const verifyUser = await User.findOne({ _id: userId });
+    // if (!verifyUser) throw new Error('User not found!');
+    // if(verifyUser.statusAccount == true) throw new Error('Your account is validated')
+    // else if (verifyUser.role === "Customer") {
+    //     await User.updateOne(
+    //         {
+    //             _id: userId
+    //         },
+    //         {
+    //             $set: {
+    //                 statusAccount: true
+    //             }
+    //         }
+    //     );
+    // Compare code Validation with token.validationCode
+    //} else err;
+    //welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+
 
 };
 
@@ -65,17 +74,17 @@ export const register = async (data) => {
     const codeValidationAccount = generateCode;
     let user = await User.findOne({ email: data.email });
     if (user) throw new Error("Email already exist");
-    user = new User({ ...data, avatar: data.avatar || '' , validationCode: codeValidationAccount});
-    
-    const token =  jwt.sign(
+    user = new User({ ...data, avatar: data.avatar || '', validationCode: codeValidationAccount });
+
+    const token = jwt.sign(
         {
             userId: user._id,
             role: user.role,
             codeValidation: codeValidationAccount
         },
-        'secret',        
+        process.env.VALIDATION_TOKEN,
         { expiresIn: '48h' },
-        process.env.VALIDATION_TOKEN
+
     );
     if (data.role === "Customer") {
         // validationAccount(user.email, user.firstName, user.lastName, token, user._id)
@@ -125,7 +134,7 @@ export const userById = (data) => {
 };
 
 // Service for update password
-export const changePassword = async (actualPassword , newPassword, confirmPassword, token) => {
+export const changePassword = async (actualPassword, newPassword, confirmPassword, token) => {
     try {
         const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN);
         const idUserVerified = verifyToken.userId;
@@ -133,7 +142,7 @@ export const changePassword = async (actualPassword , newPassword, confirmPasswo
         if (!user) throw new Error('User not found!');
         else {
             const userPassword = user.password;
-            bcrypt.compare(actualPassword , userPassword)
+            bcrypt.compare(actualPassword, userPassword)
                 .then(async (isValid) => {
                     if (!isValid) throw new Error('Current password is not correct!');
                     else {
