@@ -9,40 +9,34 @@ config();
 
 // Service for validation account
 export const validationAccountClientService = async (token) => {
-    const verifyToken = (data) => {
         try {
-            const decodedVerified = jwt.verify(token, process.env.VALIDATION_TOKEN);
+            console.log('dfdf');
+            const decodedVerified = jwt.verify(token, process.env.VALIDATION_TOKEN);          
+            const userId = decodedVerified.userId;
+            console.log("userid: ", userId);
+            const verifyUser = await User.findById({_id: userId})
+            console.log('user: ', verifyUser);
+            if(verifyUser.statusAccount == true) throw new Error('Your account is validated')
+            if(!verifyUser) throw new Error('User not found!');
+            if(decodedVerified.codeValidation != verifyUser.validationCode)  throw new Error('Validation code is wrong!')
+            if(verifyUser.role === 'Customer')
+                await User.findOneAndUpdate(
+            {
+                _id: userId
+            },
+            {
+                $set: {
+                    statusAccount: true
+                }
+            }
+        );
+        //welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+        return { success: true, dataToken: decodedVerified }
 
-            return { success: true, dataToken: decodedVerified }
         } catch (error) {
             return { success: false, error: error.message }
         }
-    }
-
-    const resultVerify = verifyToken(token)
-    if(!resultVerify.success) return  new Error ('invalid signatur')
-        else return console.log('great');
-
-    // console.log('decoded: ', decodedToken);
-    // const userId = await decodedToken.userId;
-    // console.log("user id: ", userId);
-    // const verifyUser = await User.findOne({ _id: userId });
-    // if (!verifyUser) throw new Error('User not found!');
-    // if(verifyUser.statusAccount == true) throw new Error('Your account is validated')
-    // else if (verifyUser.role === "Customer") {
-    //     await User.updateOne(
-    //         {
-    //             _id: userId
-    //         },
-    //         {
-    //             $set: {
-    //                 statusAccount: true
-    //             }
-    //         }
-    //     );
-    // Compare code Validation with token.validationCode
-    //} else err;
-    //welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+    
 
 
 };

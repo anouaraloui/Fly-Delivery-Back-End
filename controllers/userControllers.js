@@ -16,17 +16,14 @@ export const signUpController = async (req, res, next) => {
 
 // Controller for validation account
 export const validationAccountClientController = async (req, res) => {
-   
-    try {
-         const validationService = await validationAccountClientService(req.body.token);
-         if(validationService) return res.status(200).json({ message: 'Your account is verify now', validationService })
-        else return res.status(400).json({ message: 'Bad request!', validationService })
-    } catch (error) {
-        console.log(error);
-    }
-    
-    
-     
+   try {
+    const validationService = await validationAccountClientService(req.body.token);
+    console.log('return : ', validationService);
+    if(validationService.success) return res.status(200).json({message: 'Your account is verify now',  validationService })
+    else return res.status(400).json({message: 'Bad request!',  validationService })
+   } catch (error) {
+    return res.status(400).json({ message: error, validationService })
+   }     
     };
 
 // Controller for confirm account Restaurant and Deliveryman
@@ -34,7 +31,7 @@ export const confirmAccountController = async (req, res) => {
     const {id} = req.params;
     const confirmAccountService = await confirmAccount(id);
     return res.status(200).json({ message: 'Confirm account ', confirmAccountService });
-    
+     
 }
 
 // Controller for login user
