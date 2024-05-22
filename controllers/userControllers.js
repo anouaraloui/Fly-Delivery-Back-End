@@ -3,7 +3,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { requestPasswordReset, resetPassword } from "../services/passwordService.js";
-import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount, listUsersUnvalidated } from "../services/userService.js";
+import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount, listUsersUnvalidated, loginUserService } from "../services/userService.js";
 
 config();
 
@@ -18,11 +18,10 @@ export const signUpController = async (req, res, next) => {
 export const validationAccountClientController = async (req, res) => {
    try {
     const validationService = await validationAccountClientService(req.body.token);
-    console.log('return : ', validationService);
-    if(validationService.success) return res.status(200).json({message: 'Your account is verify now',  validationService })
-    else return res.status(400).json({message: 'Bad request!',  validationService })
+    if(validationService.success) return res.status(200).json({ validationService })
+    else return res.status(400).json({  validationService })
    } catch (error) {
-    return res.status(400).json({ message: error, validationService })
+    return res.status(400).json({ error })
    }     
     };
 
@@ -36,27 +35,14 @@ export const confirmAccountController = async (req, res) => {
 
 // Controller for login user
 export const loginController = async (req, res) => {
-    const { email } = req.body;
-    User.findOne({ email })
-        .then(user => {
-            if (!user) return res.status(400).json({ error: "User not found!" });
-            else if (!user.statusAccount) return res.status(400).json({ error: "Your account is not verified" });
-            else bcrypt.compare(req.body.password, user.password)
-                .then(validatePassword => {
-                    if (!validatePassword) return res.status(401).json({ error: "Incorrect password!" });
-                    else res.status(200).json({
-                        userId: user._id,
-                        token: jwt.sign(
-                            { userId: user._id, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }
-                        ),
-                        refreshToken: jwt.sign(
-                            { userId: user._id, role: user.role }, process.env.REFRESH_TOKEN, { expiresIn: '2d' }
-                        )
-                    });
-                })
-                .catch(error => res.status(400).json({ error }));
-        })
-        .catch(error => res.status(500).json({ error }));
+     const { email, password } = req.body;
+    try {
+        const loginService = await loginUserService(email, password);
+        if(loginService.success) return res.status(loginService.status).json({ response: loginService });
+        else return res.status(loginService.status).json({ loginService });
+    } catch (error) {
+        return res.status(500).json({ error })
+    }
 };
 
 // Controller for request password reset
