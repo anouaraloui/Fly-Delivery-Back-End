@@ -13,8 +13,8 @@ export const validationAccountClientService = async (token) => {
         const decodedVerified = jwt.verify(token, process.env.VALIDATION_TOKEN);
         const userId = decodedVerified.userId;
         const verifyUser = await User.findById({ _id: userId });
-        if (verifyUser.statusAccount == true) throw new Error('Your account is validated');
-        if (!verifyUser) throw new Error('User not found!');
+        if (!verifyUser) return { status: 404, success: false, message: 'User not found!' };
+        if (verifyUser.statusAccount == true) throw new Error('Your account is validated');        
         if (decodedVerified.codeValidation != verifyUser.validationCode) throw new Error('Validation code is wrong!');
         if (verifyUser.role === 'Customer')
             await User.findOneAndUpdate(
@@ -82,7 +82,7 @@ export const register = async (data) => {
 
                 );
                 if (data.role === "Customer") {
-                    // validationAccount(user.email, user.firstName, user.lastName, token, user._id)
+                    validationAccount(user.email, user.firstName, user.lastName, token, user._id);
                     console.log("token for validation account: ", token);
                 }
                 await user.save();
@@ -145,17 +145,22 @@ export const listUsers = async (data) => {
 
 //Service for get all users unvalidated with role " Restaurant & Deliveryman"
 export const listUsersUnvalidated = async (data) => {
-    if (!data.page) data.page = 1;
-    if (!data.limit) data.limit = 30;
-    const skipPage = (data.page - 1) * data.limit;
-    const usersList = await User.find({ role: ["Restaurant", "Deliveryman"], statusAccount: false })
-        .skip(skipPage)
-        .limit(data.limit)
-        .select('-password')
-        .exec();
-    const countList = await User.countDocuments({ role: ["Restaurant", "Deliveryman"], statusAccount: false });
-    if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
-    else return { status: 404, success: false, message: 'Users not found!' };
+    try {
+        if (!data.page) data.page = 1;
+        if (!data.limit) data.limit = 30;
+        const skipPage = (data.page - 1) * data.limit;
+        const usersList = await User.find({ role: ["Restaurant", "Deliveryman"], statusAccount: false })
+            .skip(skipPage)
+            .limit(data.limit)
+            .select('-password')
+            .exec();
+        const countList = await User.countDocuments({ role: ["Restaurant", "Deliveryman"], statusAccount: false });
+        if (countList == 0) return { status: 200, success: true, message: 'There are no unvalidated users!' };
+        if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
+        else return { status: 404, success: false, message: 'Users not found!' };
+    } catch (error) {
+        return { status: 500, success: false, message: error };
+    };
 };
 
 // Service for get one user
@@ -167,7 +172,7 @@ export const userById = async (data) => {
         })
         .catch(error => {
             return { status: 500, success: false, message: error };
-        })
+        });
 };
 
 // Service for update password
@@ -175,34 +180,37 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
     try {
         const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN);
         const idUserVerified = verifyToken.userId;
-        const user = await User.findById({ _id: idUserVerified });
-        if (!user) throw new Error('User not found!');
-        else {
-            const userPassword = user.password;
-            bcrypt.compare(actualPassword, userPassword)
-                .then(async (isValid) => {
-                    if (!isValid) throw new Error('Current password is not correct!');
-                    else {
-                        const comparePassword = newPassword.localeCompare(confirmPassword);
-                        if (comparePassword != 0) throw new Error('Password is not confirm');
-                        else {
-                            const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
-                            await User.updateOne(
-                                { _id: idUserVerified },
-                                {
-                                    $set: {
-                                        password: hashedPassword
-                                    }
-                                }
-                            );
-                            //welcomeBack(user.email, user.firstName, user.lastName);
-                        };
-                    };
-                }).catch(err => {
-                    new Error(err)
-                });
-        };
+        return await User.findById({ _id: idUserVerified })
+            .then(async user => {
+                if (!user) return { status: 404, success: false, error: 'Users not found!' };
+                else {
+                    const userPassword = user.password;
+                    return await bcrypt.compare(actualPassword, userPassword)
+                        .then(async (isValid) => {
+                            if (!isValid) return { status: 400, success: false, error: 'Current password is not correct!' };
+                            else {
+                                const comparePassword = newPassword.localeCompare(confirmPassword);
+                                if (comparePassword != 0) return { status: 400, success: false, error: 'Password is not confirm!' };
+                                else {
+                                    const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
+                                    await User.updateOne(
+                                        { _id: idUserVerified },
+                                        {
+                                            $set: {
+                                                password: hashedPassword
+                                            }
+                                        }
+                                    );
+                                    //welcomeBack(user.email, user.firstName, user.lastName);
+                                    return { status: 200, success: true, message: 'Password updated' }
+                                };
+                            };
+                        }).catch(err => {
+                            return { status: 400, success: false, message: ('Bad request!', err) };
+                        });
+                };
+            })
     } catch (error) {
-        new Error(error);
-    }
+        return { status: 500, success: false, message: error };
+    };
 };

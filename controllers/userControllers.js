@@ -1,7 +1,4 @@
 import { config } from "dotenv";
-import User from "../models/userModel.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { requestPasswordReset, resetPassword } from "../services/passwordService.js";
 import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount, listUsersUnvalidated, loginUserService } from "../services/userService.js";
 
@@ -58,28 +55,15 @@ export const listUsersController = async (req, res) => {
 
 // Controller for get all users unvalidated with role " Restaurant & Deliveryman"
 export const listUsersUnvalidatedController = async (req, res) => {
-    try {
-        const listUsersUnvalidatedService = await listUsersUnvalidated(req.query);
-        if (listUsersUnvalidatedService.success) return res.status(listUsersUnvalidatedService.status).json({ response: listUsersUnvalidatedService });
-        else return res.status(listUsersUnvalidatedService.status).json({ response: listUsersUnvalidatedService });
-    } catch (error) {
-        return res.status(500).json({ error });
-    };
-
+    const listUsersUnvalidatedService = await listUsersUnvalidated(req.query);
+    return res.status(listUsersUnvalidatedService.status).json({ response: listUsersUnvalidatedService });
 };
 
 // Controller for get one user
 export const getUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const getUserService = await userById(id);
-        if (getUserService.success) return res.status(getUserService.status).json({ response: getUserService });
-        else return res.status(getUserService.status).json({ response: getUserService });
-    } catch (error) {
-        return res.status(500).json({ error });
-    }
-
-
+    const { id } = req.params;
+    const getUserService = await userById(id);
+    return res.status(getUserService.status).json({ response: getUserService });
 };
 
 // Controller for update password
@@ -90,6 +74,6 @@ export const updatePasswordController = async (req, res) => {
         req.body.newPassword,
         req.body.confirmPassword,
         token);
-    if (updatePasswordService) return res.status(200).json({ message: 'Password updated!', updatePasswordService });
-    else return res.status(400).json({ message: 'Bad Request!', updatePasswordService });
+    return res.status(updatePasswordService.status).json({ response: updatePasswordService });
+
 };
