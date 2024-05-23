@@ -12,7 +12,6 @@ export const validationAccountClientService = async (token) => {
     try {
         const decodedVerified = jwt.verify(token, process.env.VALIDATION_TOKEN);
         const userId = decodedVerified.userId;
-        console.log("userid: ", userId);
         const verifyUser = await User.findById({ _id: userId });
         if (verifyUser.statusAccount == true) throw new Error('Your account is validated');
         if (!verifyUser) throw new Error('User not found!');
@@ -29,28 +28,34 @@ export const validationAccountClientService = async (token) => {
                 }
             );
         welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
-        return { status: 200, message: 'Your account is verify now', success: true, dataToken: decodedVerified };
+        return { status: 200, success: true, message: 'Your account is verify now', dataToken: decodedVerified };
 
     } catch (error) {
-        return { status: 400, message: 'Bad request!', success: false, error: error.message };
+        return { status: 400, success: false, message: 'Bad request!', error: error.message };
     };
 };
 
 // Service for confirm account for Restaurant od Deliveryman
 export const confirmAccount = async (id) => {
-    const user = await User.findOne({ id });
-    if (!user) throw new Error('User not found!');
-    else if (user.role != "Customer") {
-        await User.findByIdAndUpdate(
-            { _id: id },
-            {
-                $set: {
-                    "statusAccount": true
-                }
+    return await User.findById({ _id: id })
+        .then(async user => {
+            if (!user) return { status: 404, success: false, message: 'User not found!' };
+            if (user.statusAccount) return { status: 400, success: false, message: 'Bad request! Your account verified!' };
+            else if (user.role != "Customer") {
+                await User.findByIdAndUpdate(
+                    { _id: id },
+                    {
+                        $set: {
+                            "statusAccount": true
+                        }
+                    }
+                );
+                welcome(user.email, user.firstName, user.lastName);
+                return { status: 200, success: true, message: "Confirm account" };
             }
-        );
-        welcome(user.email, user.firstName, user.lastName);
-    };
+        }).catch((err) => {
+            return { status: 444, success: false, message: ('No Response!', err.message) };
+        });
 };
 
 //Service for register a new user
@@ -58,75 +63,84 @@ export const register = async (data) => {
     const charactersCode = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let generateCode = '';
     for (let i = 0; i < 20; i++) {
-        generateCode += charactersCode.charAt(Math.floor(Math.random() * charactersCode.length))
+        generateCode += charactersCode.charAt(Math.floor(Math.random() * charactersCode.length));
     };
     const codeValidationAccount = generateCode;
-    let user = await User.findOne({ email: data.email });
-    if (user) throw new Error("Email already exist");
-    user = new User({ ...data, avatar: data.avatar || '', validationCode: codeValidationAccount });
+    return await User.findOne({ email: data.email })
+        .then(async user => {
+            if (user) return { status: 400, success: false, message: 'Bad request! Email already exist!' };
+            else {
+                user = new User({ ...data, avatar: data.avatar || '', validationCode: codeValidationAccount });
+                const token = jwt.sign(
+                    {
+                        userId: user._id,
+                        role: user.role,
+                        codeValidation: codeValidationAccount
+                    },
+                    process.env.VALIDATION_TOKEN,
+                    { expiresIn: '48h' },
 
-    const token = jwt.sign(
-        {
-            userId: user._id,
-            role: user.role,
-            codeValidation: codeValidationAccount
-        },
-        process.env.VALIDATION_TOKEN,
-        { expiresIn: '48h' },
-
-    );
-    if (data.role === "Customer") {
-        // validationAccount(user.email, user.firstName, user.lastName, token, user._id)
-        console.log("token for validation account: ", token);
-    }
-    await user.save();
-    return (data);
+                );
+                if (data.role === "Customer") {
+                    // validationAccount(user.email, user.firstName, user.lastName, token, user._id)
+                    console.log("token for validation account: ", token);
+                }
+                await user.save();
+                return { status: 201, success: true, message: "User created", user: data };
+            }
+        })
+        .catch(error => {
+            return { status: 500, success: false, message: error };
+        });
 };
 
 // Service for login user
 export const loginUserService = async (email, password) => {
-  
     return await User.findOne({ email })
-    .then( async user => {
-        if(!user) throw new Error ('User not found!');
-        if(!user.statusAccount) throw new Error ("Your account is not verified");
-        else return  bcrypt.compare(password, user.password)
-        .then( validatePassword => {
-            if(!validatePassword) throw new Error ("Incorrect password!");
-            else return { 
-                status: 200,
-                success: true,
-                message: "Login user successfuly", 
-                userId: user._id, 
-                token: jwt.sign({ userId: user._id, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }),
-                refreshToken: jwt.sign({ userId: user._id, role: user.role }, process.env.REFRESH_TOKEN, { expiresIn: '2d' }) 
-            };
-        } )
-        .catch( error => {
-            return { status: 400, success: false, message: error }
-        } );
-    } )
-    .catch( error => {
-        return { status: 500, success: false, message: error }
-    } );
+        .then(async user => {
+            if (!user) return { status: 400, success: false, message: 'User not found!' };
+            if (!user.statusAccount) return { status: 401, success: false, message: 'Your account is not verified!' };
+            else return bcrypt.compare(password, user.password)
+                .then(validatePassword => {
+                    if (!validatePassword) return { status: 401, success: false, message: 'Incorrect password!' };
+                    else return {
+                        status: 200,
+                        success: true,
+                        message: "Login user successfuly",
+                        userId: user._id,
+                        token: jwt.sign({ userId: user._id, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }),
+                        refreshToken: jwt.sign({ userId: user._id, role: user.role }, process.env.REFRESH_TOKEN, { expiresIn: '2d' })
+                    };
+                })
+                .catch(error => {
+                    return { status: 400, success: false, message: error };
+                });
+        })
+        .catch(error => {
+            return { status: 500, success: false, message: error };
+        });
 };
 
 
 // Service for get all users
 export const listUsers = async (data) => {
-    if (!data.page) data.page = 1;
-    if (!data.limit) data.limit = 30;
-    const skipPage = (data.page - 1) * data.limit;
-    const usersList = await User.find()
-        .sort({ [data.sortBy]: 1 })
-        .skip(skipPage)
-        .limit(data.limit)
-        .where('cratedAt').lt(data.createdAtBefore).gt(data.createdAtAfter)
-        .select('-password')
-        .exec();
-    const countList = await User.countDocuments();
-    if (usersList) return { page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
-    else throw new Error('Users not found!')
+    try {
+        if (!data.page) data.page = 1;
+        if (!data.limit) data.limit = 30;
+        const skipPage = (data.page - 1) * data.limit;
+        const usersList = await User.find()
+            .sort({ [data.sortBy]: 1 })
+            .skip(skipPage)
+            .limit(data.limit)
+            .where('cratedAt').lt(data.createdAtBefore).gt(data.createdAtAfter)
+            .select('-password')
+            .exec();
+        const countList = await User.countDocuments();
+        if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
+        else return { status: 400, success: false, error: 'Users not found!' };
+    } catch (error) {
+        return { status: 500, success: false, message: error };
+    }
 };
 
 //Service for get all users unvalidated with role " Restaurant & Deliveryman"
@@ -140,15 +154,20 @@ export const listUsersUnvalidated = async (data) => {
         .select('-password')
         .exec();
     const countList = await User.countDocuments({ role: ["Restaurant", "Deliveryman"], statusAccount: false });
-    if (usersList) return { page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
-    else throw new Error('Users not found!')
+    if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
+    else return { status: 404, success: false, message: 'Users not found!' };
 };
 
 // Service for get one user
-export const userById = (data) => {
-    const user = User.find({ _id: data }).select('-password')
-    if (!user) throw new Error('Bad request!')
-    else return user;
+export const userById = async (data) => {
+    return await User.findById({ _id: data }).select('-password')
+        .then(user => {
+            if (!user) return { status: 404, success: false, error: 'Users not found!' };
+            else return { status: 200, success: true, user: user };
+        })
+        .catch(error => {
+            return { status: 500, success: false, message: error };
+        })
 };
 
 // Service for update password
@@ -156,7 +175,7 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
     try {
         const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN);
         const idUserVerified = verifyToken.userId;
-        const user = await User.findOne({ _id: idUserVerified });
+        const user = await User.findById({ _id: idUserVerified });
         if (!user) throw new Error('User not found!');
         else {
             const userPassword = user.password;
