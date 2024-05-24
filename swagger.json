@@ -50,14 +50,17 @@
           "200": {
             "description": "Successful operation"
           },
+          "400": {
+            "description": "Incorrect password !"
+          },
+          "401": {
+            "description": "Your account is not verified!"
+          },
           "404": {
             "description": "User not found !"
           },
-          "401": {
-            "description": "Incorrect password !"
-          },
-          "400": {
-            "description": "error"
+          "500": {
+            "description": "Internal Server Error!"
           }
         },
         "required": true
@@ -91,7 +94,10 @@
             "description": "Please check your email for reset your password!"
           },
           "404": {
-            "description": "User not exist !"
+            "description": "User does not exist!"
+          },
+          "444": {
+            "description": "No Response!"
           }
         }
       }
@@ -130,10 +136,19 @@
         },
         "responses": {
           "200": {
-            "description": "password updated"
+            "description": "Your password has been changed successfully"
+          },
+          "400": {
+            "description": "You have entered an actual password. Please enter a new password or log in again using the same password."
+          },
+          "401": {
+            "description": "Invalid token!"
           },
           "404": {
-            "description": "User not found!"
+            "description": "Request user not exist!"
+          }, 
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -194,7 +209,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful operation",
+            "description": "User created",
             "content": {
               "application/json":{
                 "schema": {
@@ -204,10 +219,10 @@
             }
           },
           "400": {
-            "description": "Bad request"
+            "description": "Bad request! Email already exist!"
           },
-          "401": {
-            "description": "Unauthorized"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -261,8 +276,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "succussffully operation ",
+          "200": {
+            "description": "succussffully operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -301,11 +316,14 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request "
-          },
           "401": {
             "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Users not found!"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }     
@@ -335,10 +353,19 @@
         },
         "responses": {
           "200": {
-            "description": "Successful validation account."
+            "description": "Your account is verify now"
+          },
+          "400": {
+            "description": "Validation code is wrong!"
           },
           "404": {
             "description": "User not found !"
+          },
+          "409": {
+            "description": "Your account is already validated!"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -366,13 +393,22 @@
       ],
       "responses": {
         "200": {
-          "description": "Successful operation"
+          "description": "Successful Operation Account Confirmed"
         },
         "401": {
           "description": "Invalid request"
         }, 
         "403": {
           "description": "Access denied!"
+        },
+        "404": {
+          "description": "User not found !"
+        },
+        "409": {
+          "description": "Bad request! Your account is already verified!"
+        },
+        "500": {
+          "description": "Internal Server Error!"
         }
 
       }
@@ -449,11 +485,20 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request"
+          "200": {
+            "description": "Succussffully operation"
+          },
+          "204": {
+            "description": "There are no unvalidated users!"
+          },
+          "404": {
+            "description": "Users not found!"
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error!"
           }
         }
       }
@@ -479,7 +524,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "successful operation",
             "content": {
               "application/json": {
@@ -489,11 +534,14 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request"
+          "404": {
+            "description": "User not found!"
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error!"
           }
         }
       }
@@ -540,13 +588,19 @@
             "description": "Password has been changed"
           },
           "400": {
-            "description": "Bad request "
+            "description": "Bad request! Current password is not correct!"
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
             "description": "User not exist !"
+          },
+          "406": {
+            "description": "Password is not confirm!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
           }
         }
       }

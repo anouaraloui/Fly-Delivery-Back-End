@@ -14,8 +14,8 @@ export const validationAccountClientService = async (token) => {
         const userId = decodedVerified.userId;
         const verifyUser = await User.findById({ _id: userId });
         if (!verifyUser) return { status: 404, success: false, message: 'User not found!' };
-        if (verifyUser.statusAccount == true) throw new Error('Your account is validated');        
-        if (decodedVerified.codeValidation != verifyUser.validationCode) throw new Error('Validation code is wrong!');
+        if (verifyUser.statusAccount == true) return { status: 409, success: false, message: 'Your account is already validated!'};        
+        if (decodedVerified.codeValidation != verifyUser.validationCode) return { status: 404, success: false, message: 'Validation code is wrong!'};
         if (verifyUser.role === 'Customer')
             await User.findOneAndUpdate(
                 {
@@ -31,7 +31,7 @@ export const validationAccountClientService = async (token) => {
         return { status: 200, success: true, message: 'Your account is verify now', dataToken: decodedVerified };
 
     } catch (error) {
-        return { status: 400, success: false, message: 'Bad request!', error: error.message };
+        return { status: 500, success: false, message: 'Bad request!', error: error };
     };
 };
 
@@ -40,7 +40,7 @@ export const confirmAccount = async (id) => {
     return await User.findById({ _id: id })
         .then(async user => {
             if (!user) return { status: 404, success: false, message: 'User not found!' };
-            if (user.statusAccount) return { status: 400, success: false, message: 'Bad request! Your account verified!' };
+            if (user.statusAccount) return { status: 409, success: false, message: 'Bad request! Your account is already verified!' };
             else if (user.role != "Customer") {
                 await User.findByIdAndUpdate(
                     { _id: id },
@@ -51,10 +51,10 @@ export const confirmAccount = async (id) => {
                     }
                 );
                 welcome(user.email, user.firstName, user.lastName);
-                return { status: 200, success: true, message: "Confirm account" };
+                return { status: 200, success: true, message: "Successful Operation Account Confirmed" };
             }
         }).catch((err) => {
-            return { status: 444, success: false, message: ('No Response!', err.message) };
+            return { status: 500, success: false, message: err };
         });
 };
 
@@ -98,11 +98,11 @@ export const register = async (data) => {
 export const loginUserService = async (email, password) => {
     return await User.findOne({ email })
         .then(async user => {
-            if (!user) return { status: 400, success: false, message: 'User not found!' };
+            if (!user) return { status: 404, success: false, message: 'User not found!' };
             if (!user.statusAccount) return { status: 401, success: false, message: 'Your account is not verified!' };
             else return bcrypt.compare(password, user.password)
                 .then(validatePassword => {
-                    if (!validatePassword) return { status: 401, success: false, message: 'Incorrect password!' };
+                    if (!validatePassword) return { status: 400, success: false, message: 'Incorrect password!' };
                     else return {
                         status: 200,
                         success: true,
@@ -136,8 +136,8 @@ export const listUsers = async (data) => {
             .select('-password')
             .exec();
         const countList = await User.countDocuments();
-        if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
-        else return { status: 400, success: false, error: 'Users not found!' };
+        if (usersList) return { status: 200, success: true, message: 'Succussffully operation', page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
+        else return { status: 404, success: false, error: 'Users not found!' };
     } catch (error) {
         return { status: 500, success: false, message: error };
     }
@@ -155,7 +155,7 @@ export const listUsersUnvalidated = async (data) => {
             .select('-password')
             .exec();
         const countList = await User.countDocuments({ role: ["Restaurant", "Deliveryman"], statusAccount: false });
-        if (countList == 0) return { status: 200, success: true, message: 'There are no unvalidated users!' };
+        if (countList == 0) return { status: 204, success: true, message: 'There are no unvalidated users!' };
         if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
         else return { status: 404, success: false, message: 'Users not found!' };
     } catch (error) {
@@ -167,7 +167,7 @@ export const listUsersUnvalidated = async (data) => {
 export const userById = async (data) => {
     return await User.findById({ _id: data }).select('-password')
         .then(user => {
-            if (!user) return { status: 404, success: false, error: 'Users not found!' };
+            if (!user) return { status: 404, success: false, error: 'User not found!' };
             else return { status: 200, success: true, user: user };
         })
         .catch(error => {
@@ -182,7 +182,7 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
         const idUserVerified = verifyToken.userId;
         return await User.findById({ _id: idUserVerified })
             .then(async user => {
-                if (!user) return { status: 404, success: false, error: 'Users not found!' };
+                if (!user) return { status: 404, success: false, error: 'User not found!' };
                 else {
                     const userPassword = user.password;
                     return await bcrypt.compare(actualPassword, userPassword)
@@ -190,7 +190,7 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
                             if (!isValid) return { status: 400, success: false, error: 'Current password is not correct!' };
                             else {
                                 const comparePassword = newPassword.localeCompare(confirmPassword);
-                                if (comparePassword != 0) return { status: 400, success: false, error: 'Password is not confirm!' };
+                                if (comparePassword != 0) return { status: 406, success: false, error: 'Password is not confirm!' };
                                 else {
                                     const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
                                     await User.updateOne(
@@ -202,7 +202,7 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
                                         }
                                     );
                                     //welcomeBack(user.email, user.firstName, user.lastName);
-                                    return { status: 200, success: true, message: 'Password updated' }
+                                    return { status: 200, success: true, message: 'Password has been changed' }
                                 };
                             };
                         }).catch(err => {
