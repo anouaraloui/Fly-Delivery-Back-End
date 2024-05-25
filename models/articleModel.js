@@ -6,26 +6,26 @@ const { Schema } = mongoose;
 
 let articleSchema= new Schema(
     {
-        articleName: {
+        name: {
             type: String,
             required: true
         },
-        articlePicture: {
+        picture: {
             type: String,
             required: false
         },
-        articlePrice: {
+        price: {
             type: String,
             required: true
         },
-        articleRating: {
+        rating: {
             type: Number,
             required: true,
             min: 0,
             max: 5,
             default: 0
         },
-        articleNbrReviews: {
+        reviews: {
             type: Number,
             required: true,
             default: 0
@@ -34,11 +34,11 @@ let articleSchema= new Schema(
             type: Number,
             required: false
         },
-        articleInformation: {
+        information: {
             type: String,
             required: true
         }
-    }
+    }, {timestamps: true}
 );
 
 articleSchema.plugin(uniqueValidator);

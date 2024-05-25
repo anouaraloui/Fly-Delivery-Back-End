@@ -42,13 +42,13 @@ export const validateRequestPasswordReset = [
 
 // Validator for article
 export const validateArticle = [
-    body('articleName').notEmpty().withMessage("Article name is required!"),
-    body('articlePicture').optional(),
-    body('articlePrice').notEmpty().withMessage("Article price is required!"),
-    body('articleRating').default(0),
-    body('articleNbreReviews').default(0),
-    body('discountPrice').optional(),
-    body('articleInformation').notEmpty().withMessage("Article information is required!"),
+    body('name').notEmpty().withMessage("Article name is required!"),
+    body('picture').optional(),
+    body('price').notEmpty().withMessage("Article price is required!"),
+    body('rating').default(0),
+    body('reviews').default(0),
+    body('price').optional(),
+    body('information').notEmpty().withMessage("Article information is required!"),
 
     (req, res, next) => {
         const errors = validationResult(req);
