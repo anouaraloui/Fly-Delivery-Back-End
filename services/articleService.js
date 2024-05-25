@@ -27,7 +27,13 @@ export const listArticles = async (data) => {
         .sort({ [data.sortBy]: 1 })
         .skip(skipPage)
         .limit(data.limit)
+        .where('price').lt(data.maxPrice).gt(data.minPrice)
+        .exec();
+        const count = await Article.countDocuments();
+        if(count == 0) return { status: 204, success: true, message: 'There are no article!' };
+        else if (articleList) return { status: 200, success: true, page: data.page, limit: data.limit, totalArticles: count, articles: articleList };
+        else return { status: 404, success: false, message: 'Articles not found!' }
     } catch (error) {
-        
+        return { status: 500, success: false, message: error }
     }
-}
+};
