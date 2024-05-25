@@ -1,4 +1,4 @@
-import { createArticle } from "../services/articleService"
+import { createArticle } from "../services/articleService.js"
 
 
 // Controller for create new article

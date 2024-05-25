@@ -7,11 +7,11 @@ const { Schema } = mongoose;
 let articleSchema= new Schema(
     {
         articleName: {
-            trpe: String,
+            type: String,
             required: true
         },
         articlePicture: {
-            trpe: String,
+            type: String,
             required: false
         },
         articlePrice: {
@@ -30,8 +30,8 @@ let articleSchema= new Schema(
             required: true,
             default: 0
         },
-        discountPrice: {
-            type: true,
+        discount: {
+            type: Number,
             required: false
         },
         articleInformation: {

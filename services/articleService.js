@@ -1,4 +1,4 @@
-import Article from "../models/articleModel";
+import Article from "../models/articleModel.js";
 
 
 // Service for create new article
