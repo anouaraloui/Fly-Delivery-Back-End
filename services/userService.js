@@ -136,6 +136,7 @@ export const listUsers = async (data) => {
             .select('-password')
             .exec();
         const countList = await User.countDocuments();
+        if(countList == 0) return { status: 204, success: true, message: 'There are no article!' }
         if (usersList) return { status: 200, success: true, message: 'Succussffully operation', page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
         else return { status: 404, success: false, error: 'Users not found!' };
     } catch (error) {
