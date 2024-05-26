@@ -15,8 +15,9 @@ let articleSchema= new Schema(
             required: false
         },
         price: {
-            type: Number,
-            required: true
+            type: String,
+            required: true,
+            min: 0
         },
         rating: {
             type: Number,
