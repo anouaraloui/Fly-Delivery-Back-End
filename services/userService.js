@@ -66,10 +66,13 @@ export const register = async (data) => {
         generateCode += charactersCode.charAt(Math.floor(Math.random() * charactersCode.length));
     };
     const codeValidationAccount = generateCode;
-    return await User.findOne({ email: data.email })
-        .then(async user => {
-            if (user) return { status: 400, success: false, message: 'Bad request! Email already exist!' };
-            else {
+    return await User.findOne({$or: [{ email: data.email} , {phone: data.phone}] })
+        .then(async user => {           
+    if (user) {
+        if(user.email === data.email && user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Email and Phone already exists!' };
+        if (user.email === data.email) return { status: 400, success: false, message: 'Bad request! Email already exists!' };
+        if (user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Phone already exists!' };
+      } else {
                 user = new User({ ...data, avatar: data.avatar || '', validationCode: codeValidationAccount });
                 const token = jwt.sign(
                     {
