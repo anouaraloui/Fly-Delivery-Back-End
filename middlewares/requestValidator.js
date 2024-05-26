@@ -15,7 +15,7 @@ export const ValidateRequestRegister = [
     body('role').notEmpty()
         .isIn(['Admin', 'Restaurant', 'Deliveryman', 'Customer']).withMessage('Role is required!'),
     body('phone').notEmpty().withMessage('Phone is required')
-        .isMobilePhone('ar-TN'),
+    .isMobilePhone().isMobilePhone('ar-TN').withMessage('Phone number should be 8 digits'),
     body('adress').optional(),
     body('avatar').optional(),
     body('validationCode').optional(),
