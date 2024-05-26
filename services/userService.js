@@ -132,7 +132,7 @@ export const listUsers = async (data) => {
             .sort({ [data.sortBy]: 1 })
             .skip(skipPage)
             .limit(data.limit)
-            .where('').lt(data.createdAtBefore).gt(data.createdAtAfter)
+            .where('createdAt').lt(data.createdAtBefore).gt(data.createdAtAfter)
             .select('-password')
             .exec();
         const countList = await User.countDocuments();

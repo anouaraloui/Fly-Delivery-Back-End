@@ -20,20 +20,22 @@ export const createArticle = async (data) => {
 // Service for get all articles
 export const listArticles = async (data) => {
     try {
+        const minPriceFind = data.minPrice;
+        const maxPriceFind = data.maxPrice;
+        if(isNaN(minPriceFind) || isNaN(maxPriceFind) || minPriceFind > maxPriceFind ) return { status: 404, success: true, message: 'Invalid price range!' };
         if(!data.page) data.page = 1;
         if(!data.limit) data.limit = 30;
         const skipPage = (data.page - 1) * data.limit;
         const articleList = await Article.find()
         .sort({ [data.sortBy]: 1 })
         .skip(skipPage)
-        .limit(data.limit)
-        .where('price').lt(data.maxPrice).gt(data.minPrice)
+        .limit(parseInt(data.limit))
+        .where('price').gte(minPriceFind).lte(maxPriceFind)
         .exec();
-        const count = await Article.countDocuments();
-        if(count == 0) return { status: 204, success: true, message: 'There are no article!' };
-        else if (articleList) return { status: 200, success: true, page: data.page, limit: data.limit, totalArticles: count, articles: articleList };
-        else return { status: 404, success: false, message: 'Articles not found!' }
+        const count = articleList.length;
+        if( articleList && count === 0) return { status: 404, success: true, message: 'There are no article!' };
+        else return { status: 200, success: true, page: data.page, limit: data.limit, totalArticles: count, articles: articleList };
     } catch (error) {
-        return { status: 500, success: false, message: error }
-    }
+        return { status: 500, success: false, message: error };
+    };
 };
