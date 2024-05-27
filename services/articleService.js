@@ -53,4 +53,19 @@ export const updateArticle = async (id, data) => {
     }).catch((err) => {
         return { status: 400, success: false, message: err.message }
     });
-}
+};
+
+// Service for delete article
+export const deleteArticle = async (id) => {
+    return await Article.findById(id)
+    .then( async article => {
+        if(!article) return { status: 404, succes: false, message: 'Article not found!' };
+        else {
+            await Article.findByIdAndDelete(id);
+            return { status: 200, succes: true, message: 'Article is deleted' }
+        }
+    })
+    .catch(err => {
+        return { status: 400, succes: false, message: err }
+    });
+};

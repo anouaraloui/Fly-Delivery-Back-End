@@ -1,4 +1,4 @@
-import { createArticle, listArticles, updateArticle } from "../services/articleService.js"
+import { createArticle, deleteArticle, listArticles, updateArticle } from "../services/articleService.js"
 
 
 // Controller for create new article
@@ -17,4 +17,10 @@ export const getAllController = async (req, res) => {
 export const updateArticleController = async (req, res) => {
     const updateArticleService = await updateArticle(req.params.id, req.body);
     return res.status(updateArticleService.status).json({ response: updateArticleService });
+};
+
+// Controller for delete article with id
+export const deleteArticleController = async (req, res) => {
+    const deleteArticleService = await deleteArticle(req.params.id);
+    return res.status(deleteArticleService.status).json({ response: deleteArticleService });
 };
