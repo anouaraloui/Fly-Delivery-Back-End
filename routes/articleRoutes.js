@@ -1,7 +1,7 @@
 import express from "express";
 import { validateArticle } from "../middlewares/requestValidator.js";
 import { role } from "../middlewares/checkRole.js";
-import { createArticleController, getAllController } from "../controllers/articleControllers.js";
+import { createArticleController, getAllController, updateArticleController } from "../controllers/articleControllers.js";
 import isAuth from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -12,5 +12,8 @@ validateArticle, createArticleController);
 
 router.get('/article',isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
 getAllController);
+
+router.put('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
+updateArticleController); 
 
 export default router;

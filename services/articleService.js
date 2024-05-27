@@ -39,3 +39,18 @@ export const listArticles = async (data) => {
         return { status: 500, success: false, message: error };
     };
 };
+
+// Service for update article
+export const updateArticle = async (id, data) => {
+    return await Article.findById(id)
+    .then( async (result) => {
+        if(!result) return { status: 404, success: false, message: 'Article not found!' }
+        else {
+            const newArticle = await Article.findByIdAndUpdate(id, {...data})
+            await newArticle.save();
+            return { status: 200, success: true, message: 'Article updated', article: newArticle }
+        }
+    }).catch((err) => {
+        return { status: 400, success: false, message: err.message }
+    });
+}
