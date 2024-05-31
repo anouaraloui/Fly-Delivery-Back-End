@@ -10,6 +10,7 @@ const router = express.Router();
 router.post('/article', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 validateArticle, createArticleController);
 
+// Route for display all articles
 router.get('/article',isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
 getAllController);
 
@@ -17,9 +18,11 @@ getAllController);
 router.get('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
 getAticleByIdController)
 
+// Route to update an article
 router.put('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
 updateArticleController);
 
+// Route for delete an article
 router.delete('/article/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 deleteArticleController);
 
