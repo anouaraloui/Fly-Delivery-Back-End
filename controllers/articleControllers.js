@@ -27,6 +27,10 @@ export const updateArticleController = async (req, res) => {
 
 // Controller for delete article with id
 export const deleteArticleController = async (req, res) => {
-    const deleteArticleService = await deleteArticle(req.params.id);
+    const restaurantToken = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(restaurantToken, process.env.ACCESS_TOKEN);
+    const userId = decoded.userId;
+    const deleteArticleService = await deleteArticle(req.params.id, userId);
+    console.log('delete controller: ', deleteArticleService);
     return res.status(deleteArticleService.status).json({ response: deleteArticleService });
 };
