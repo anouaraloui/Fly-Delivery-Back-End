@@ -1,4 +1,4 @@
-import { createArticle, deleteArticle, getAticleById, listArticles, updateArticle } from "../services/articleService.js"
+import { createArticle, deleteAllArticles, deleteArticle, getAticleById, listArticles, updateArticle } from "../services/articleService.js"
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 
@@ -39,4 +39,13 @@ export const deleteArticleController = async (req, res) => {
     const deleteArticleService = await deleteArticle(req.params.id, userId);
     console.log('delete controller: ', deleteArticleService);
     return res.status(deleteArticleService.status).json({ response: deleteArticleService });
+};
+
+// Controller to remove all articles created by the same restaurant
+export const deleteAllArticlesController = async (req, res) => {
+    const restaurantToken = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(restaurantToken, process.env.ACCESS_TOKEN);
+    const restaurantId = decoded.userId;
+    const deleteAllArticlesService = await deleteAllArticles(restaurantId);
+    return res.status(deleteAllArticlesService.status).json({ response: deleteAllArticlesService });
 };

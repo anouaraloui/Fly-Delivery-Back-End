@@ -1,7 +1,7 @@
 import express from "express";
 import { validateArticle } from "../middlewares/requestValidator.js";
 import { role } from "../middlewares/checkRole.js";
-import { createArticleController, deleteArticleController, getAllController, getAticleByIdController, updateArticleController } from "../controllers/articleControllers.js";
+import { createArticleController, deleteAllArticlesController, deleteArticleController, getAllController, getAticleByIdController, updateArticleController } from "../controllers/articleControllers.js";
 import isAuth from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -25,5 +25,9 @@ updateArticleController);
 // Route for delete an article
 router.delete('/article/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 deleteArticleController);
+
+// Route to delete all articles created by the same restaurant
+router.delete('/article', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
+deleteAllArticlesController);
 
 export default router;

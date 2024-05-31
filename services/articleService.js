@@ -86,3 +86,18 @@ export const deleteArticle = async (id, userId) => {
             return { status: 400, succes: false, message: err }
         });
 };
+
+// Service for delete all articles created by the same restaurant
+export const deleteAllArticles = async (restaurantId) => {
+    return await Article.find({ restaurantId: restaurantId})
+    .then(async article => {
+        if(!article) return { status: 404, succes: false, message: 'You have no articles!' };
+        else {
+            await Article.deleteMany({ restaurantId: restaurantId });
+            return { status: 200, succes: true, message: 'Your articles are deleted' } ;
+        };
+    })
+    .catch(err => {
+        return { status: 400, succes: false, message: err }
+    });
+};
