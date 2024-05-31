@@ -41,6 +41,18 @@ export const listArticles = async (data) => {
     };
 };
 
+// Service to display an article whose identifier is known
+export const getAticleById = async (id) => {
+    return await Article.findById(id)
+    .then( article => {
+        if(!article) return { status: 404, success: true, message: 'Article not found!' };
+        else return { status: 200, success: true, article: article }
+    })
+    .catch(err => { 
+        return { status: 500, success: false, message: err.message };
+    });
+};
+
 // Service for update article
 export const updateArticle = async (id, data) => {
     return await Article.findById(id)

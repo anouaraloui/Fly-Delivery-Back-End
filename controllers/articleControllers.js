@@ -1,4 +1,4 @@
-import { createArticle, deleteArticle, listArticles, updateArticle } from "../services/articleService.js"
+import { createArticle, deleteArticle, getAticleById, listArticles, updateArticle } from "../services/articleService.js"
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 
@@ -19,7 +19,13 @@ export const getAllController = async (req, res) => {
     return res.status(getAllService.status).json({ response: getAllService });
 };
 
-// Controller for update article with id
+// Controller to display an article with id
+export const getAticleByIdController = async(req, res) => {
+    const getAticleByIdService = await getAticleById(req.params.id);
+    return res.status(getAticleByIdService.status).json({ response: getAticleByIdService });
+};
+
+// Controller for update article with id 
 export const updateArticleController = async (req, res) => {
     const updateArticleService = await updateArticle(req.params.id, req.body);
     return res.status(updateArticleService.status).json({ response: updateArticleService });
