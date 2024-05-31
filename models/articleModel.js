@@ -6,6 +6,11 @@ const { Schema } = mongoose;
 
 let articleSchema= new Schema(
     {
+        restaurantId: {
+            type: mongoose.Schema.Types.ObjectId, 
+                ref:'User', 
+                required: true
+        },
         name: {
             type: String,
             required: true

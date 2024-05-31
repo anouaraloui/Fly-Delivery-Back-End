@@ -1,9 +1,15 @@
 import { createArticle, deleteArticle, listArticles, updateArticle } from "../services/articleService.js"
+import jwt from "jsonwebtoken";
+import { config } from "dotenv";
 
+config();
 
 // Controller for create new article
 export const createArticleController = async (req, res) => {
-    const createArticleService = await createArticle(req.body);
+    const restaurantToken = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(restaurantToken, process.env.ACCESS_TOKEN);
+    const restaurantId = decoded.userId;
+    const createArticleService = await createArticle(req.body, restaurantId);
     return res.status(createArticleService.status).json({ response: createArticleService })
 };
 
