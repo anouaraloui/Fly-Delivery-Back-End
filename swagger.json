@@ -51,13 +51,10 @@
             "description": "Successful operation"
           },
           "400": {
-            "description": "Incorrect password !"
+            "description": "Bad request!"
           },
           "401": {
-            "description": "Your account is not verified!"
-          },
-          "404": {
-            "description": "User not found !"
+            "description": "Unauthorized!"
           },
           "500": {
             "description": "Internal Server Error!"
@@ -94,7 +91,7 @@
             "description": "Please check your email for reset your password!"
           },
           "404": {
-            "description": "User does not exist!"
+            "description": "Not Found!"
           },
           "444": {
             "description": "No Response!"

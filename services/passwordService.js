@@ -24,7 +24,7 @@ export const requestPasswordReset = async (email) => {
         }).save();
         emailForgotPassword(user.email, user.firstName, user.lastName, resetToken, user._id);
         console.log("reset: ", resetToken);
-        return { status: 200, success: true, message: 'Check your email!' }
+        return { status: 200, success: true, message: 'Please check your email for reset your password!' }
     } catch (error) {
         return { status: 444, success: false, message: err.message };
     }
