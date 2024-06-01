@@ -101,15 +101,15 @@ export const register = async (data) => {
 export const loginUserService = async (email, password) => {
     return await User.findOne({ email })
         .then(async user => {
-            if (!user) return { status: 404, success: false, message: 'User not found!' };
+            if (!user) return { status: 401, success: false, message: 'Invalid email. Please try again with the correct credentials.!' };
             if (!user.statusAccount) return { status: 401, success: false, message: 'Your account is not verified!' };
             else return bcrypt.compare(password, user.password)
                 .then(validatePassword => {
-                    if (!validatePassword) return { status: 400, success: false, message: 'Incorrect password!' };
+                    if (!validatePassword) return { status: 401, success: false, message: 'Incorrect password!' };
                     else return {
                         status: 200,
                         success: true,
-                        message: "Login user successfuly",
+                        message: "You have successfully logged in.",
                         userId: user._id,
                         token: jwt.sign({ userId: user._id, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }),
                         refreshToken: jwt.sign({ userId: user._id, role: user.role }, process.env.REFRESH_TOKEN, { expiresIn: '2d' })
