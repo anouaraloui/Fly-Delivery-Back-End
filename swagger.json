@@ -16,7 +16,11 @@
     },
     {
       "name": "users",
-      "description": "Operations for Users"
+      "description": "Users Operations"
+    },
+    {
+      "name": "articles",
+      "description": "Articles Operations"
     }
   ],
   "paths": {
@@ -601,7 +605,396 @@
           }
         }
       }
+    },
+    "/article": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Add new article",
+        "description": "Add new article",
+        "operationId": "AddArticle",
+        "requestBody": {
+          "description": "Add new article",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Pizza"
+                  },
+                  "picture": {
+                    "type": "string",
+                    "example": "pizzapicture"}
+                    ,
+                  "price": {
+                    "type": "integer",
+                    "example" : 40
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "default" : 0
+                  },
+                  "reviews": {
+                    "type": "integer",
+                    "default" : 0
+                  },
+                  "information": {
+                    "type": "string",  
+                    "example": "Sauce + mozarella + frites "
+                  },
+                  "discount": {
+                    "type": "integer",
+                    "example" : 40
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Article created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request!"
+          }, 
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Get the list of all articles",
+        "description": "Get the list of all articles",
+        "operationId": "ListAllArticles",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "description": "Filter articles with price greater or equal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "description": "Filter articles with price less or equal",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succussffully operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalArticles": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "articles": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "_id": "665a072f9cb36aa8375e3c01",
+                          "restaurantId": "66429b84caaf6f4270b0254b",
+                          "name": "Pizza Napolitaine",
+                          "picture": "pizzapicture",
+                          "price": 40,
+                          "rating": 0,
+                          "reviews": 0,
+                          "discount": 10,
+                          "information": "Sauce + mozarella"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid price range!"
+          },
+          "404": {
+            "description": "There are no article!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Delete all articles created by the same restaurant",
+        "description": "Delete all articles created by the same restaurant",
+        "operationId": "DeleteAllArticles",
+        "responses": {
+          "200": {
+            "description": "Your articles are deleted"
+          },
+          "400": {
+            "description": "Bad request!"
+          },
+          "404": {
+            "description": "You have no articles"
+          }
+        }
+      }
+    },
+    "/article/{id}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Get an article whose identifier is known",
+        "description": "Get an article whose identifier is known",
+        "operationId": "GetArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Article not found !"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Update article whose identifier is known",
+        "description": "Update article whose identifier is known",
+        "operationId": "UpdateArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The article that needs to updated",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Article with new properties",
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "restaurantId": {
+                    "type": "string",
+                    "example": "66063369f5a2397ad3b4fa5d"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Pizza"
+                  },
+                  "picture": {
+                    "type": "string",
+                    "example": "picture of this article"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 20
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "reviews": {
+                    "type": "integer",
+                    "example": 10
+                  },
+                  "discount": {
+                    "type": "integer",
+                    "example": 30
+                  },
+                  "information": {
+                    "type": "string",
+                    "example": "all information about this article"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Article updated ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "restaurantId": {
+                      "type": "string",
+                      "example": "66063369f5a2397ad3b4fa5d"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Pizza"
+                    },
+                    "picture": {
+                      "type": "string",
+                      "example": "picture of this article"
+                    },
+                    "price": {
+                      "type": "integer",
+                      "example": 20
+                    },
+                    "rating": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "reviews": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "discount": {
+                      "type": "integer",
+                      "example": 30
+                    },
+                    "information": {
+                      "type": "string",
+                      "example": "all information about this article"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request!"
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      },
+      "delete": {
+      "security": [
+        {
+          "Bearer": []
+        }
+      ],
+      "tags": [
+        "articles"
+      ],
+      "summary": "Delete article whose identifier is known",
+      "description": "Delete article whose identifier is known",
+      "operationId": "deleteArticle",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "The article that needs to be deleted",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Article is succussffully deleted"
+        },
+        "400": {
+          "description": "Bad request!"
+        },
+        "401": {
+          "description": "Unauthorized! Invalid token"
+        },
+        "404": {
+          "description": "Article not found!"
+        }
+      }
     }
+    }    
   },
   "components": {
     "schemas": {
@@ -647,8 +1040,8 @@
             ]
           },
           "phone": {
-            "type": "string",
-            "example": "00 000 000"
+            "type": "integer",
+            "example": 12345678
           },
           "adress": {
             "type": "string",
@@ -657,6 +1050,49 @@
           "avatar": {
             "type": "string",
             "example": "example"
+          }
+        }
+      },
+      "Article": {
+        "required": [
+          "restaurantId",
+          "name",
+          "price",
+          "information"
+        ],
+        "type": "object",
+        "properties": {
+          "restaurantId": {
+            "type": "string",
+            "example": "66063369f5a2397ad3b4fa5d"
+          },
+          "name": {
+            "type": "string",
+            "example": "Pizza"
+          },
+          "picture": {
+            "type": "string",
+            "example": "picture of this article"
+          },
+          "price": {
+            "type": "integer",
+            "example": 20
+          },
+          "rating": {
+            "type": "integer",
+            "example": 1
+          },
+          "reviews": {
+            "type": "integer",
+            "example": 10
+          },
+          "discount": {
+            "type": "integer",
+            "example": 30
+          },
+          "information": {
+            "type": "string",
+            "example": "all information about this article"
           }
         }
       }
@@ -668,6 +1104,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
+      "Article": {
+        "description": "List of articles object",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Article"
             }
           }
         }
