@@ -21,9 +21,9 @@ export const createArticle = async (data, restaurantId) => {
 // Service for get all articles
 export const listArticles = async (data) => {
     try {
-        const minPriceFind = data.minPrice;
-        const maxPriceFind = data.maxPrice;
-        if (isNaN(minPriceFind) || isNaN(maxPriceFind) || minPriceFind > maxPriceFind) return { status: 404, success: true, message: 'Invalid price range!' };
+        const minPriceFind = Number(data.minPrice);
+        const maxPriceFind = Number(data.maxPrice);
+        if (isNaN(minPriceFind) || isNaN(maxPriceFind) || minPriceFind > maxPriceFind) return { status: 400, success: true, message: 'Invalid price range!' };
         if (!data.page) data.page = 1;
         if (!data.limit) data.limit = 30;
         const skipPage = (data.page - 1) * data.limit;
@@ -51,6 +51,24 @@ export const getAticleById = async (id) => {
     .catch(err => { 
         return { status: 500, success: false, message: err.message };
     });
+};
+
+// Service to display all article created by the same restaurant
+export const getArticleByRestaurant = async (data,restaurant) => {
+    try {       
+    if (!data.page) data.page = 1;
+    if (!data.limit) data.limit = 30;
+    const skipPage = (data.page - 1) * data.limit;
+    const articleList = await Article.find({ restaurantId: restaurant})
+                        .skip(skipPage)
+                        .limit(parseInt(data.limit))
+                        .exec();
+    const count = articleList.length;
+    if(articleList && count === 0 || !articleList) return { status: 404, success: false, message: 'You have no article yet' };
+    else return { status: 200, success: true, page: data.page, limit: data.limit, totalArticles: count, articles: articleList };
+    } catch (error) {
+        return { status: 500, success: false, message: error.message };
+    };
 };
 
 // Service for update article

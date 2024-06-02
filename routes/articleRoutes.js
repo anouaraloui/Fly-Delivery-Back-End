@@ -1,7 +1,7 @@
 import express from "express";
 import { validateArticle } from "../middlewares/requestValidator.js";
 import { role } from "../middlewares/checkRole.js";
-import { createArticleController, deleteAllArticlesController, deleteArticleController, getAllController, getAticleByIdController, updateArticleController } from "../controllers/articleControllers.js";
+import { createArticleController, deleteAllArticlesController, deleteArticleController, getAllController, getArticleByRestaurantController, getAticleByIdController, updateArticleController } from "../controllers/articleControllers.js";
 import isAuth from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -13,6 +13,10 @@ validateArticle, createArticleController);
 // Route for display all articles
 router.get('/article',isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
 getAllController);
+
+// Route for display all articles created by the same restaurant
+router.get('/article/restaurant/myarticles', (req, res, next) => role(['Restaurant'], req, res, next),
+getArticleByRestaurantController)
 
 // Route to display an article whose identifier is known
 router.get('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),

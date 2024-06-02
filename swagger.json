@@ -147,7 +147,7 @@
           },
           "404": {
             "description": "Request user not exist!"
-          }, 
+          },
           "500": {
             "description": "Internal server error"
           }
@@ -212,7 +212,7 @@
           "201": {
             "description": "User created",
             "content": {
-              "application/json":{
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
                 }
@@ -327,7 +327,7 @@
             "description": "Internal server error"
           }
         }
-      }     
+      }
     },
     "/users/validationAccountClient": {
       "patch": {
@@ -373,48 +373,45 @@
     },
     "/users/confirmAccount/{id}": {
       "patch": {
-        
-      "security": [
-        {
-          "Bearer": []
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Confirm account Restaurant & Deliveryman",
+        "description": "Confirm account Restaurant & Deliveryman.",
+        "operationId": "confirmAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation Account Confirmed"
+          },
+          "401": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Access denied!"
+          },
+          "404": {
+            "description": "User not found !"
+          },
+          "409": {
+            "description": "Bad request! Your account is already verified!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
         }
-      ],
-      "tags": [
-        "users"
-      ],
-      "summary": "Confirm account Restaurant & Deliveryman",
-      "description": "Confirm account Restaurant & Deliveryman.",
-      "operationId": "confirmAccount",
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Successful Operation Account Confirmed"
-        },
-        "401": {
-          "description": "Invalid request"
-        }, 
-        "403": {
-          "description": "Access denied!"
-        },
-        "404": {
-          "description": "User not found !"
-        },
-        "409": {
-          "description": "Bad request! Your account is already verified!"
-        },
-        "500": {
-          "description": "Internal Server Error!"
-        }
-
       }
-      
-    }
     },
     "/users/request": {
       "get": {
@@ -547,7 +544,7 @@
         }
       }
     },
-    "/users/password/change": {      
+    "/users/password/change": {
       "patch": {
         "security": [
           {
@@ -632,27 +629,27 @@
                   },
                   "picture": {
                     "type": "string",
-                    "example": "pizzapicture"}
-                    ,
+                    "example": "pizzapicture"
+                  },
                   "price": {
                     "type": "integer",
-                    "example" : 40
+                    "example": 40
                   },
                   "rating": {
                     "type": "integer",
-                    "default" : 0
+                    "default": 0
                   },
                   "reviews": {
                     "type": "integer",
-                    "default" : 0
+                    "default": 0
                   },
                   "information": {
-                    "type": "string",  
+                    "type": "string",
                     "example": "Sauce + mozarella + frites "
                   },
                   "discount": {
                     "type": "integer",
-                    "example" : 40
+                    "example": 40
                   }
                 }
               }
@@ -672,7 +669,7 @@
           },
           "404": {
             "description": "Bad request!"
-          }, 
+          },
           "500": {
             "description": "Internal Server Error!"
           }
@@ -960,41 +957,120 @@
         }
       },
       "delete": {
-      "security": [
-        {
-          "Bearer": []
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Delete article whose identifier is known",
+        "description": "Delete article whose identifier is known",
+        "operationId": "deleteArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The article that needs to be deleted",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article is succussffully deleted"
+          },
+          "400": {
+            "description": "Bad request!"
+          },
+          "401": {
+            "description": "Unauthorized! Invalid token"
+          },
+          "404": {
+            "description": "Article not found!"
+          }
         }
-      ],
-      "tags": [
-        "articles"
-      ],
-      "summary": "Delete article whose identifier is known",
-      "description": "Delete article whose identifier is known",
-      "operationId": "deleteArticle",
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "The article that needs to be deleted",
-          "required": true
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Article is succussffully deleted"
-        },
-        "400": {
-          "description": "Bad request!"
-        },
-        "401": {
-          "description": "Unauthorized! Invalid token"
-        },
-        "404": {
-          "description": "Article not found!"
+      }
+    },
+    "/article/restaurant/myarticles": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Get all article created by the same restaurant",
+        "description": "Get all article created by the same restaurant",
+        "operationId": "GetArticleByRestaurant",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succussffully operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalArticles": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "articles": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "_id": "665a072f9cb36aa8375e3c01",
+                          "restaurantId": "66429b84caaf6f4270b0254b",
+                          "name": "Pizza Napolitaine",
+                          "picture": "pizzapicture",
+                          "price": 40,
+                          "rating": 0,
+                          "reviews": 0,
+                          "discount": 10,
+                          "information": "Sauce + mozarella"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "You have no article yet"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
         }
       }
     }
-    }    
   },
   "components": {
     "schemas": {

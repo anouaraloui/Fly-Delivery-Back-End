@@ -1,6 +1,7 @@
-import { createArticle, deleteAllArticles, deleteArticle, getAticleById, listArticles, updateArticle } from "../services/articleService.js"
+import { createArticle, deleteAllArticles, deleteArticle, getArticleByRestaurant, getAticleById, listArticles, updateArticle } from "../services/articleService.js"
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+import { query } from "express";
 
 config();
 
@@ -18,6 +19,15 @@ export const getAllController = async (req, res) => {
     const getAllService = await listArticles(req.query);
     return res.status(getAllService.status).json({ response: getAllService });
 };
+
+// Controller for display articles created by the some restaurant
+export const getArticleByRestaurantController = async (req, res) => {
+    const restaurantToken = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(restaurantToken, process.env.ACCESS_TOKEN);
+    const restaurant = decoded.userId;
+    const getArticleByRestaurantService = await getArticleByRestaurant(req.query, restaurant);
+    return res.status(getArticleByRestaurantService.status).json({ response: getArticleByRestaurantService });
+}
 
 // Controller to display an article with id
 export const getAticleByIdController = async(req, res) => {
