@@ -26,14 +26,14 @@ let articleSchema= new Schema(
         },
         rating: {
             type: Number,
-            required: true,
+            required: false,
             min: 0,
             max: 5,
             default: 0
         },
         reviews: {
             type: Number,
-            required: true,
+            required: false,
             default: 0
         },
         discount: {
