@@ -6,7 +6,8 @@ import { connectDB } from "./configuration/connectMondoDB.js";
 import userRoutes from './routes/userRoutes.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json' assert { type: "json" };
-import articleRoutes from './routes/articleRoutes.js'
+import articleRoutes from './routes/articleRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 const app = express();
 
@@ -21,7 +22,8 @@ connectDB();
 
 app.use('/api-swagger-test', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(userRoutes);
-app.use(articleRoutes)
+app.use(articleRoutes);
+app.use(orderRoutes);
 
 app.use((error, req, res, next) => {
     res.status(500).json({ error: error.message });
