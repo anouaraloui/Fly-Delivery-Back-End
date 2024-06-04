@@ -2,21 +2,22 @@ import Article from "../models/articleModel.js";
 
 
 // Service for create new article
-export const createArticle = async (data, restaurantId) => {
-    return await Article.findOne({ name: data.name })
-        .then(async article => {
-            if (article) return { status: 404, success: false, message: 'Bad request! Article name already exist!' };
-            else {
-
-                article = new Article({ ...data, picture: data.picture || '', restaurantId: restaurantId });
-                await article.save();
-                return { status: 201, success: true, message: "Article created", article: data }
-            }
-        })
-        .catch(error => {
+export const createArticle = async (data, restaurant) => {
+    return await Article.find({restaurantId: restaurant})
+    .then(async (article) => {
+        const findName = article.map((searchName)=> searchName.name);
+        const newArticleName = await data.name;
+        if(findName.includes(newArticleName)) return { status: 404, success: false, message: 'Bad request! Article name already exist!' };
+        else{
+            article = new Article({ ...data, picture: data.picture || '', restaurantId: restaurant });
+            await article.save();
+            return { status: 201, success: true, message: "Article created", article: data }
+        };
+    })
+    .catch(error => {
             return { status: 500, success: false, message: error.message };
-        })
-}
+        });
+};
 
 // Service for get all articles
 export const listArticles = async (data) => {
@@ -87,13 +88,13 @@ export const updateArticle = async (id, data) => {
 };
 
 // Service for delete article
-export const deleteArticle = async (id, userId) => {
+export const deleteArticle = async (id, restaurant) => {
     return await Article.findById(id)
         .then(async article => {
             if (!article) return { status: 404, succes: false, message: 'Article not found!' };
             else {
                 const restaurant = article.restaurantId;
-                if (restaurant != userId) return { status: 401, succes: false, message: 'Unauthorized! Invalid token' };
+                if (restaurant != restaurant) return { status: 401, succes: false, message: 'Unauthorized! Invalid token' };
                 else    {
                     await Article.findByIdAndDelete(id);
                     return { status: 200, succes: true, message: 'Article is deleted' }
