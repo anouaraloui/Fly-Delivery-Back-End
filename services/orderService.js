@@ -3,30 +3,55 @@ import Order from "../models/orderModel.js";
 
 // Service for create new order
 export const addNewOrder = async (article, userId, data) => {
-    return await Article.findById(article)
-        .then(async (order) => {
-            if (!order) return { status: 404, success: false, message: 'Article not found! Please repeat it again' };
-            else {
-                // Make condition when same client add an order with the same article id ==> it will be patch just number of pieces 
-                // Without this condition we can find more than one order with same article id 
-                // so if client send an order on the same article id just change the number of pieces  
-                const articleId = order._id;
-                const restaurantId = order.restaurantId;
-                const pricePieces = order.price;
-                const priceOrder = pricePieces * data.numberPieces;
-                order = new Order({
-                    articleId: articleId,
-                    clientId: userId,
-                    restaurantId: restaurantId,
-                    numberPieces: data.numberPieces,
-                    pricePieces: pricePieces,
-                    priceOrder: priceOrder
-                });
-                await order.save();
-                return { status: 200, success: true, message: 'Order created', order: order };
+    return await Order.find({ clientId: userId })
+        .then(async (result) => {
+            const oldArticleOrder = result.map((oldArticle) => (oldArticle.articleId).toString());
+            const findArticle = () => {
+                for (let i = 0, oldArticle = oldArticleOrder.length; i <= oldArticle; i++) {
+                    if (oldArticleOrder[i] === article) {
+                        return { status: true, value: oldArticleOrder[i] };
+                    };
+                };
+                return { status: false, value: article };
             };
-        })
-        .catch(error => {
-            return { status: 500, success: false, message: error.message };
+            const articleValueId = findArticle();
+            if (articleValueId.status) {
+                return await Order.findOne({ articleId: articleValueId.value }).where('clientId').equals(userId)
+                    .then(async (findOrder) => {
+                        const newNumberPieces = findOrder.numberPieces + data.numberPieces;
+                        const newPriceOrder = findOrder.pricePieces * newNumberPieces;
+                        await Order.findByIdAndUpdate(
+                            { _id: findOrder._id },
+                            {
+                                $set: {
+                                    numberPieces: newNumberPieces,
+                                    priceOrder: newPriceOrder
+                                }
+                            }
+                        );
+                        await findOrder.save();
+                        return { status: 200, success: true, message: 'Order updatet because you already have order with this article' };
+                    }).catch((err) => {
+                        return { status: 400, success: false, error: err.message };
+                    });
+            } else try {
+                return await Article.findById(article)
+                    .then(async (order) => {
+                        order = new Order({
+                            articleId: article,
+                            clientId: userId,
+                            restaurantId: order.restaurantId,
+                            numberPieces: data.numberPieces,
+                            pricePieces: order.price,
+                            priceOrder: order.price * data.numberPieces
+                        });
+                        await order.save();
+                        return { status: 200, success: true, message: 'Order created', order: order };
+                    })
+            } catch (error) {
+                return { status: 400, success: false, error: error.message };
+            }
+        }).catch((err) => {
+            return { status: 500, success: false, error: err.message };
         });
 };
