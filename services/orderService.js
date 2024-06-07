@@ -55,3 +55,22 @@ export const addNewOrder = async (article, userId, data) => {
             return { status: 500, success: false, error: err.message };
         });
 };
+
+// Service for display all order created by the same user
+export const getAllOrder = async (userId, data) => {
+    if (!data.page) data.page = 1;
+    if (!data.limit) data.limit = 10;
+    const skipPage = (data.page - 1) * data.limit;
+    return await Order.find({ clientId: userId })
+        .skip(skipPage).limit(data.limit).exec()
+        .then(order => {
+            if (!order) return { status: 404, success: false, message: 'You have not orders' };
+            else {
+                const count = order.length;
+                if(count == 0) return { status: 204, success: true };
+                return { status: 200, success: true, page: data.page, limit: data.limit, listOrders: count, orders: order };
+            }
+        }).catch(error => {
+            return { status: 500, success: false, message: error.message };
+        })
+};
