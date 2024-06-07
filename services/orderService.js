@@ -74,3 +74,31 @@ export const getAllOrder = async (userId, data) => {
             return { status: 500, success: false, message: error.message };
         })
 };
+
+// Service for update an order
+export const updateOrder = async (userId, id, data) => {
+    return await Order.findById(id).where('clientId').equals(userId)
+    .then(async (result) => {
+        if(!result) return { status: 404, success: false, message: 'Order not found!'};
+        else {
+            if(result.status) return { status: 400, success: false, message: 'You can not update this order!'};
+            else{
+                const newNumberPieces =  result.numberPieces + data.numberPieces;
+                const newPriceOrder = result.pricePieces * newNumberPieces;
+                await Order.findByIdAndUpdate(
+                    {_id: result._id},
+                    {
+                        $set: {
+                            numberPieces: newNumberPieces,
+                            priceOrder: newPriceOrder
+                        }
+                    }
+                );
+                await result.save();
+                return { status: 200, success: true, message: 'Order updatet' };
+            }
+        }
+    }).catch((err) => {
+        return { status: 500, success: false, message: err.message };
+    });
+};
