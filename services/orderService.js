@@ -116,3 +116,17 @@ export const deleteOrder = async (userId, id) => {
         return { status: 400, succes: false, message: err.message }
     });
 };
+
+// Service for delete all orders created by the same client
+export const deleteAllOrders = async (userId) => {
+    return await Order.find().where('clientId').equals(userId)
+    .then(async(result) => {
+        if(result.length == 0) return { status: 404, success: false, message: 'You have not yet an order!' };
+        else {
+            await Order.deleteMany({ clientId: userId });
+            return { status: 200, success: true, message: 'All your orders are deleted' };
+        }
+    }).catch((err) => {
+        return { status: 400, succes: false, message: err.message };
+    });
+};

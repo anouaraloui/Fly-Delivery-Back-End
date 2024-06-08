@@ -1,4 +1,4 @@
-import { addNewOrder, deleteOrder, getAllOrder, updateOrder } from "../services/orderService.js";
+import { addNewOrder, deleteAllOrders, deleteOrder, getAllOrder, updateOrder } from "../services/orderService.js";
 import findUserId from "../utils/findUserId.js";
 
 // Controller for create new order
@@ -31,3 +31,10 @@ export const deleteOrderController = async(req, res) => {
     const deleteOrderService = await deleteOrder(userId, id);
     return res.status(deleteOrderService.status).json({ response: deleteOrderService });
 };
+
+// Controller for remove all orders created by the sama client
+export const deleteAllOrdersController = async (req, res) => {
+    const userId = await findUserId(req);
+    const deleteAllOrdersService = await deleteAllOrders(userId);
+    return res.status(deleteAllOrdersService.status).json({ response: deleteAllOrdersService });
+}

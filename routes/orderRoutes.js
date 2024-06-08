@@ -1,7 +1,7 @@
 import express from "express";
 import { role } from "../middlewares/checkRole.js";
 import isAuth from "../middlewares/auth.js";
-import { addNewOrderController, deleteOrderController, getAllOrderController, updateOrderController } from "../controllers/orderController.js";
+import { addNewOrderController, deleteAllOrdersController, deleteOrderController, getAllOrderController, updateOrderController } from "../controllers/orderController.js";
 import checkArticle from "../middlewares/checkArticle.js";
 import { deleteOrder } from "../services/orderService.js";
 import { validatorId } from "../middlewares/idValidator.js";
@@ -23,5 +23,9 @@ updateOrderController);
 // Route for delete an order
 router.delete('/order/:id', isAuth, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
 validatorId, deleteOrderController);
+
+// Route for remove all orders created by the same client
+router.delete('/order', isAuth, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
+deleteAllOrdersController);
 
 export default router;
