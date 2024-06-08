@@ -24,6 +24,12 @@ let articleSchema= new Schema(
             required: true,
             min: 0
         },
+        priceDiscount: {
+            type: Number,
+            required: false,
+            default: 0,
+            min: 0
+        },
         rating: {
             type: Number,
             required: false,

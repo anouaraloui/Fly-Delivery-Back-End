@@ -9,7 +9,11 @@ export const createArticle = async (data, restaurant) => {
         const newArticleName = await data.name;
         if(findName.includes(newArticleName)) return { status: 404, success: false, message: 'Bad request! Article name already exist!' };
         else{
-            article = new Article({ ...data, picture: data.picture || '', restaurantId: restaurant });
+            if(data.discount === 0)  article = new Article({ ...data, picture: data.picture || '', restaurantId: restaurant });
+            else {
+                const priceDiscount = data.price - ((data.price * data.discount) / 100);
+                article = new Article({ ...data, picture: data.picture || '', restaurantId: restaurant, priceDiscount: priceDiscount });
+            };           
             await article.save();
             return { status: 201, success: true, message: "Article created", article: data }
         };
@@ -78,8 +82,12 @@ export const updateArticle = async (id, userId, data) => {
         .then(async (result) => {
             if (!result) return { status: 404, success: false, message: 'Article not found!' };
             else {
-                const newArticle = await Article.findByIdAndUpdate(id, { ...data }).where('restaurantId').equals(userId);
-                await newArticle.save();
+                if(data.discount === 0 ) result = await Article.findByIdAndUpdate(id, { ...data }).where('restaurantId').equals(userId);
+                else {
+                    const priceDiscount = data.price - ((data.price * data.discount) / 100);
+                    result = await Article.findByIdAndUpdate(id, { ...data , priceDiscount: priceDiscount}).where('restaurantId').equals(userId);
+                }
+                await result.save();
                 return { status: 200, success: true, message: 'Article updated' };
             }
         }).catch((err) => {
@@ -89,7 +97,7 @@ export const updateArticle = async (id, userId, data) => {
 
 // Service for delete article
 export const deleteArticle = async (id, restaurant) => {
-    return await Article.findById(id)
+    return await Article.findById(id).where('restaurantId').equals(restaurant)
         .then(async article => {
             if (!article) return { status: 404, succes: false, message: 'Article not found!' };
             else {
@@ -110,7 +118,7 @@ export const deleteArticle = async (id, restaurant) => {
 export const deleteAllArticles = async (restaurantId) => {
     return await Article.find({ restaurantId: restaurantId})
     .then(async article => {
-        if(!article) return { status: 404, succes: false, message: 'You have no articles!' };
+        if(!article || article.length == 0) return { status: 404, succes: false, message: 'You have no articles!' };
         else {
             await Article.deleteMany({ restaurantId: restaurantId });
             return { status: 200, succes: true, message: 'Your articles are deleted' } ;
