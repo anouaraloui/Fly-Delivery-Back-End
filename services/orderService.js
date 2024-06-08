@@ -102,3 +102,17 @@ export const updateOrder = async (userId, id, data) => {
         return { status: 500, success: false, message: err.message };
     });
 };
+
+// Service for delete order by id created by the same client
+export const deleteOrder = async (userId, id) => {
+    return await Order.findById(id).where('clientId').equals(userId)
+    .then(async(order) => {
+        if(!order) return { status: 404, success: false, message: 'Order not found!' };
+        else{
+            await Order.findByIdAndDelete(id);
+            return { status: 200, success: true, message: 'Order is deleted' };
+        }
+    }).catch((err) => {
+        return { status: 400, succes: false, message: err.message }
+    });
+};
