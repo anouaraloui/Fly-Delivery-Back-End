@@ -40,7 +40,9 @@ export const getAticleByIdController = async(req, res) => {
 
 // Controller for update article with id 
 export const updateArticleController = async (req, res) => {
-    const updateArticleService = await updateArticle(req.params.id, req.body);
+    const userId = await findUserId(req);
+    const { id } = req.params;
+    const updateArticleService = await updateArticle(id, userId, req.body);
     return res.status(updateArticleService.status).json({ response: updateArticleService });
 };
 

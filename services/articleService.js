@@ -73,17 +73,17 @@ export const getArticleByRestaurant = async (data,restaurant) => {
 };
 
 // Service for update article
-export const updateArticle = async (id, data) => {
-    return await Article.findById(id)
+export const updateArticle = async (id, userId, data) => {
+    return await Article.findById(id).where('restaurantId').equals(userId)
         .then(async (result) => {
-            if (!result) return { status: 404, success: false, message: 'Article not found!' }
+            if (!result) return { status: 404, success: false, message: 'Article not found!' };
             else {
-                const newArticle = await Article.findByIdAndUpdate(id, { ...data })
+                const newArticle = await Article.findByIdAndUpdate(id, { ...data }).where('restaurantId').equals(userId);
                 await newArticle.save();
-                return { status: 200, success: true, message: 'Article updated', article: newArticle }
+                return { status: 200, success: true, message: 'Article updated' };
             }
         }).catch((err) => {
-            return { status: 400, success: false, message: err.message }
+            return { status: 400, success: false, message: err.message };
         });
 };
 

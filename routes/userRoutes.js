@@ -21,7 +21,7 @@ router.patch('/auth/resetPassword', validateRequestPasswordReset,resetPasswordCo
 router.post('/users', ValidateRequestRegister , signUpController)
 
 // Route for get all users
-.get('/users', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
+.get('/users', isAuth, (req, res, next) => role(['Admin'], req, res, next),
 listUsersController);
 
 // Route for validation a account

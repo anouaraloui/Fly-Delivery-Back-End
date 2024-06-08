@@ -3,6 +3,7 @@ import { validateArticle } from "../middlewares/requestValidator.js";
 import { role } from "../middlewares/checkRole.js";
 import { createArticleController, deleteAllArticlesController, deleteArticleController, getAllController, getArticleByRestaurantController, getAticleByIdController, updateArticleController } from "../controllers/articleControllers.js";
 import isAuth from "../middlewares/auth.js";
+import { validatorId } from "../middlewares/idValidator.js";
 
 const router = express.Router();
 
@@ -23,8 +24,8 @@ router.get('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restauran
 getAticleByIdController)
 
 // Route to update an article
-router.put('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
-updateArticleController);
+router.put('/article/:id', isAuth, (req, res, next) => role([ 'Restaurant' ], req, res, next), 
+validatorId, updateArticleController);
 
 // Route for delete an article
 router.delete('/article/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
