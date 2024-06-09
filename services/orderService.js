@@ -72,7 +72,7 @@ export const getAllOrder = async (userId, data) => {
             }
         }).catch(error => {
             return { status: 500, success: false, message: error.message };
-        })
+        });
 };
 
 // Service for update an order
@@ -113,7 +113,7 @@ export const deleteOrder = async (userId, id) => {
             return { status: 200, success: true, message: 'Order is deleted' };
         }
     }).catch((err) => {
-        return { status: 400, succes: false, message: err.message }
+        return { status: 400, succes: false, message: err.message };
     });
 };
 
@@ -125,7 +125,7 @@ export const deleteAllOrders = async (userId) => {
         else {
             await Order.deleteMany({ clientId: userId });
             return { status: 200, success: true, message: 'All your orders are deleted' };
-        }
+        };
     }).catch((err) => {
         return { status: 400, succes: false, message: err.message };
     });

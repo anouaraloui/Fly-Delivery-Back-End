@@ -5,7 +5,7 @@ import findUserId from "../utils/findUserId.js";
 export const createArticleController = async (req, res) => {
     const restaurant = await findUserId(req);
     const createArticleService = await createArticle(req.body, restaurant);
-    return res.status(createArticleService.status).json({ response: createArticleService })
+    return res.status(createArticleService.status).json({ response: createArticleService });
 };
 
 // Controller for get all articles

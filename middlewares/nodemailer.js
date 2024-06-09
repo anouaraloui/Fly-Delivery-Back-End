@@ -1,9 +1,9 @@
 import nodemailer from "nodemailer";
 import { config } from "dotenv";
 
-
 config()
 
+// Configuration nodemailer
 const transport = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     auth: {
@@ -15,9 +15,10 @@ const transport = nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false
     }
-})
+});
 
-const welcomeAdmin = (email, firstName, lastName,password) => {
+//  Email for admin when created the first time
+const welcomeAdmin = (email, firstName, lastName, password) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
@@ -31,9 +32,10 @@ const welcomeAdmin = (email, firstName, lastName,password) => {
         <p>Best regards.<p>
         <p>Your Fly-Delivery Team</p>
         `
-    })
+    });
 };
 
+// Email for user when to forget password
 const emailForgotPassword = (email, firstName, lastName, token, userId) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
@@ -52,10 +54,10 @@ const emailForgotPassword = (email, firstName, lastName, token, userId) => {
         </div>
         `
     })
-        .catch(err => console.log(err))
+    .catch(err => console.log(err))
 };
 
-
+// Email for user to reset password
 const emailResetPassword = (email, firstName, lastName) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
@@ -70,10 +72,10 @@ const emailResetPassword = (email, firstName, lastName) => {
         <p>With best regards<p>
         <p>Your Fly-Delivery Team</p>
         `
-    })
+    });
 };
 
-
+// Email to the user when registering for this application
 const welcome = (email, firstName, lastName) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
@@ -88,9 +90,10 @@ const welcome = (email, firstName, lastName) => {
         <p>Best regards.<p>
         <p>Your Fly-Delivery Team</p>
         `
-    })
+    });
 };
 
+// Email to user when changing password
 const welcomeBack = (email, firstName, lastName) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
@@ -105,9 +108,10 @@ const welcomeBack = (email, firstName, lastName) => {
         <p>Best regards.<p>
         <p>Your Fly-Delivery Team</p>
         `
-    })
+    });
 };
 
+// Email to the user to validate the account
 const validationAccount = (email, firstName, lastName, token, userId) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
@@ -122,8 +126,7 @@ const validationAccount = (email, firstName, lastName, token, userId) => {
         <p>See you there!<p>
         <p>Best regards, the Fly-Delivery Team</p>
         `
-    })
-}
-
+    });
+};
 
 export { welcomeAdmin, emailForgotPassword, emailResetPassword, welcome, welcomeBack, validationAccount };

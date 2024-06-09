@@ -37,4 +37,4 @@ export const deleteAllOrdersController = async (req, res) => {
     const userId = await findUserId(req);
     const deleteAllOrdersService = await deleteAllOrders(userId);
     return res.status(deleteAllOrdersService.status).json({ response: deleteAllOrdersService });
-}
+};

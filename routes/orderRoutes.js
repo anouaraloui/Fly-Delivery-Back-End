@@ -3,7 +3,6 @@ import { role } from "../middlewares/checkRole.js";
 import isAuth from "../middlewares/auth.js";
 import { addNewOrderController, deleteAllOrdersController, deleteOrderController, getAllOrderController, updateOrderController } from "../controllers/orderController.js";
 import checkArticle from "../middlewares/checkArticle.js";
-import { deleteOrder } from "../services/orderService.js";
 import { validatorId } from "../middlewares/idValidator.js";
 
 const router = express.Router();

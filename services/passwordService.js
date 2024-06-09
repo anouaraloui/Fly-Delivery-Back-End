@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import { emailForgotPassword, emailResetPassword } from "../middlewares/nodemailer.js";
 import crypto from "crypto";
-import jwt from 'jsonwebtoken';
 
 config();
 
@@ -23,12 +22,10 @@ export const requestPasswordReset = async (email) => {
             createdAt: Date.now()
         }).save();
         emailForgotPassword(user.email, user.firstName, user.lastName, resetToken, user._id);
-        console.log("reset: ", resetToken);
-        return { status: 200, success: true, message: 'Please check your email for reset your password!' }
+        return { status: 200, success: true, message: 'Please check your email for reset your password!' };
     } catch (error) {
         return { status: 444, success: false, message: err.message };
-    }
-
+    };
 };
 
 // Service for reset password

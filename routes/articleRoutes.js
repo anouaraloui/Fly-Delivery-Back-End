@@ -17,11 +17,11 @@ getAllController);
 
 // Route for display all articles created by the same restaurant
 router.get('/article/restaurant/myarticles', (req, res, next) => role(['Restaurant'], req, res, next),
-getArticleByRestaurantController)
+getArticleByRestaurantController);
 
 // Route to display an article whose identifier is known
 router.get('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
-getAticleByIdController)
+getAticleByIdController);
 
 // Route to update an article
 router.put('/article/:id', isAuth, (req, res, next) => role([ 'Restaurant' ], req, res, next), 

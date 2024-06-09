@@ -25,11 +25,11 @@ router.post('/users', ValidateRequestRegister , signUpController)
 listUsersController);
 
 // Route for validation a account
-router.patch('/users/validationAccountClient', validationAccountClientController)
+router.patch('/users/validationAccountClient', validationAccountClientController);
 
 // Route for confirm account Restaurant und Deliveryman
 router.patch('/users/confirmAccount/:id', isAuth, validatorId, (req, res, next) => role(['Admin'], req, res, next),
-confirmAccountController)
+confirmAccountController);
 
 // Route for get all users unvalidated with role "Restaurant & Deliveryman"
 router.get('/users/request', isAuth, (req, res, next) => role(['Admin'], req, res, next),listUsersUnvalidatedController);
@@ -40,7 +40,6 @@ getUser);
 
 //Route for update password
 router.patch('/users/password/change', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
-updatePasswordController
-)
+updatePasswordController);
 
 export default router;

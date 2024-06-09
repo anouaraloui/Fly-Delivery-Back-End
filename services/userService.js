@@ -14,8 +14,8 @@ export const validationAccountClientService = async (token) => {
         const userId = decodedVerified.userId;
         const verifyUser = await User.findById({ _id: userId });
         if (!verifyUser) return { status: 404, success: false, message: 'User not found!' };
-        if (verifyUser.statusAccount == true) return { status: 409, success: false, message: 'Your account is already validated!'};        
-        if (decodedVerified.codeValidation != verifyUser.validationCode) return { status: 404, success: false, message: 'Validation code is wrong!'};
+        if (verifyUser.statusAccount == true) return { status: 409, success: false, message: 'Your account is already validated!' };
+        if (decodedVerified.codeValidation != verifyUser.validationCode) return { status: 404, success: false, message: 'Validation code is wrong!' };
         if (verifyUser.role === 'Customer')
             await User.findOneAndUpdate(
                 {
@@ -31,7 +31,7 @@ export const validationAccountClientService = async (token) => {
         return { status: 200, success: true, message: 'Your account is verify now', dataToken: decodedVerified };
 
     } catch (error) {
-        return { status: 500, success: false, message: 'Bad request!', error: error };
+        return { status: 500, success: false, message: 'Bad request!', error: error.message };
     };
 };
 
@@ -52,9 +52,9 @@ export const confirmAccount = async (id) => {
                 );
                 welcome(user.email, user.firstName, user.lastName);
                 return { status: 200, success: true, message: "Successful Operation Account Confirmed" };
-            }
+            };
         }).catch((err) => {
-            return { status: 500, success: false, message: err };
+            return { status: 500, success: false, message: err.message };
         });
 };
 
@@ -66,13 +66,13 @@ export const register = async (data) => {
         generateCode += charactersCode.charAt(Math.floor(Math.random() * charactersCode.length));
     };
     const codeValidationAccount = generateCode;
-    return await User.findOne({$or: [{ email: data.email} , {phone: data.phone}] })
-        .then(async user => {           
-    if (user) {
-        if(user.email === data.email && user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Email and Phone already exists!' };
-        if (user.email === data.email) return { status: 400, success: false, message: 'Bad request! Email already exists!' };
-        if (user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Phone already exists!' };
-      } else {
+    return await User.findOne({ $or: [{ email: data.email }, { phone: data.phone }] })
+        .then(async user => {
+            if (user) {
+                if (user.email === data.email && user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Email and Phone already exists!' };
+                if (user.email === data.email) return { status: 400, success: false, message: 'Bad request! Email already exists!' };
+                if (user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Phone already exists!' };
+            } else {
                 user = new User({ ...data, avatar: data.avatar || '', validationCode: codeValidationAccount });
                 const token = jwt.sign(
                     {
@@ -87,13 +87,13 @@ export const register = async (data) => {
                 if (data.role === "Customer") {
                     validationAccount(user.email, user.firstName, user.lastName, token, user._id);
                     console.log("token for validation account: ", token);
-                }
+                };
                 await user.save();
                 return { status: 201, success: true, message: "User created", user: data };
             }
         })
         .catch(error => {
-            return { status: 500, success: false, message: error };
+            return { status: 500, success: false, message: error.message };
         });
 };
 
@@ -120,7 +120,7 @@ export const loginUserService = async (email, password) => {
                 });
         })
         .catch(error => {
-            return { status: 500, success: false, message: error };
+            return { status: 500, success: false, message: error.message };
         });
 };
 
@@ -139,12 +139,12 @@ export const listUsers = async (data) => {
             .select('-password')
             .exec();
         const countList = await User.countDocuments();
-        if(countList == 0) return { status: 204, success: true, message: 'There are no article!' }
+        if (countList == 0) return { status: 204, success: true, message: 'There are no article!' };
         if (usersList) return { status: 200, success: true, message: 'Succussffully operation', page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
         else return { status: 404, success: false, error: 'Users not found!' };
     } catch (error) {
-        return { status: 500, success: false, message: error };
-    }
+        return { status: 500, success: false, message: error.message };
+    };
 };
 
 //Service for get all users unvalidated with role " Restaurant & Deliveryman"
@@ -163,7 +163,7 @@ export const listUsersUnvalidated = async (data) => {
         if (usersList) return { status: 200, success: true, page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
         else return { status: 404, success: false, message: 'Users not found!' };
     } catch (error) {
-        return { status: 500, success: false, message: error };
+        return { status: 500, success: false, message: error.message };
     };
 };
 
@@ -175,7 +175,7 @@ export const userById = async (data) => {
             else return { status: 200, success: true, user: user };
         })
         .catch(error => {
-            return { status: 500, success: false, message: error };
+            return { status: 500, success: false, message: error.message };
         });
 };
 
@@ -205,16 +205,16 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
                                             }
                                         }
                                     );
-                                    //welcomeBack(user.email, user.firstName, user.lastName);
-                                    return { status: 200, success: true, message: 'Password has been changed' }
+                                    welcomeBack(user.email, user.firstName, user.lastName);
+                                    return { status: 200, success: true, message: 'Password has been changed' };
                                 };
                             };
                         }).catch(err => {
-                            return { status: 400, success: false, message: ('Bad request!', err) };
+                            return { status: 400, success: false, message: 'Bad request!' };
                         });
                 };
             })
     } catch (error) {
-        return { status: 500, success: false, message: error };
+        return { status: 500, success: false, message: error.message };
     };
 };

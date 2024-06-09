@@ -7,7 +7,7 @@ export const createArticle = async (data, restaurant) => {
     .then(async (article) => {
         const findName = article.map((searchName)=> searchName.name);
         const newArticleName = await data.name;
-        if(findName.includes(newArticleName)) return { status: 404, success: false, message: 'Bad request! Article name already exist!' };
+        if(findName.includes(newArticleName)) return { status: 400, success: false, message: 'Bad request! Article name already exist!' };
         else{
             if(data.discount === 0)  article = new Article({ ...data, picture: data.picture || '', restaurantId: restaurant });
             else {
@@ -42,7 +42,7 @@ export const listArticles = async (data) => {
         if (articleList && count === 0) return { status: 404, success: true, message: 'There are no article!' };
         else return { status: 200, success: true, page: data.page, limit: data.limit, totalArticles: count, articles: articleList };
     } catch (error) {
-        return { status: 500, success: false, message: error };
+        return { status: 500, success: false, message: error.message };
     };
 };
 
@@ -51,7 +51,7 @@ export const getAticleById = async (id) => {
     return await Article.findById(id)
     .then( article => {
         if(!article) return { status: 404, success: true, message: 'Article not found!' };
-        else return { status: 200, success: true, article: article }
+        else return { status: 200, success: true, article: article };
     })
     .catch(err => { 
         return { status: 500, success: false, message: err.message };
@@ -105,12 +105,12 @@ export const deleteArticle = async (id, restaurant) => {
                 if (restaurant != restaurant) return { status: 401, succes: false, message: 'Unauthorized! Invalid token' };
                 else    {
                     await Article.findByIdAndDelete(id);
-                    return { status: 200, succes: true, message: 'Article is deleted' }
+                    return { status: 200, succes: true, message: 'Article is deleted' };
                 };
-            }
+            };
         })
         .catch(err => {
-            return { status: 400, succes: false, message: err }
+            return { status: 400, succes: false, message: err.message }
         });
 };
 
@@ -125,6 +125,6 @@ export const deleteAllArticles = async (restaurantId) => {
         };
     })
     .catch(err => {
-        return { status: 400, succes: false, message: err }
+        return { status: 400, succes: false, message: err.message };
     });
 };

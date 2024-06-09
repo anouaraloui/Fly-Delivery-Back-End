@@ -22,7 +22,7 @@ export const confirmAccountController = async (req, res) => {
     const { id } = req.params;
     const confirmAccountService = await confirmAccount(id);
     return res.status(confirmAccountService.status).json({ response: confirmAccountService });
-}
+};
 
 // Controller for login user
 export const loginController = async (req, res) => {
@@ -75,5 +75,4 @@ export const updatePasswordController = async (req, res) => {
         req.body.confirmPassword,
         token);
     return res.status(updatePasswordService.status).json({ response: updatePasswordService });
-
 };

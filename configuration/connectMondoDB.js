@@ -13,5 +13,5 @@ export const connectDB = () => {
     })
     .catch(()=> {
         console.log("Unable to connect to database.");
-    })
-}
+    });
+};

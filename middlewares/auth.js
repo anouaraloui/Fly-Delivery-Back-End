@@ -12,7 +12,7 @@ const isAuth = (req, res, next) => {
         else next();
     } catch (error) {
         res.status(401).json({ error: 'Unauthorized! "Invalid token"'}); 
-    }
+    };
 };
 
 export default isAuth;
