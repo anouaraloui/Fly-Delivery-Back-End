@@ -16,7 +16,7 @@ query.exec( (err, res) => {
         } else {
             const admin = new User({...adminData});
             admin.save();
-            welcomeAdmin(admin.email, admin.firstName, admin.lastName, adminData.password);                    
+            welcomeAdmin(admin.email, admin.name, adminData.password);                    
             console.log('admin is created');
         };
     };

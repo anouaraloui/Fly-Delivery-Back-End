@@ -2,13 +2,12 @@ import { body, validationResult } from 'express-validator';
 
 // Validator for register a new user
 export const ValidateRequestRegister = [
-    body(['firstName', 'lastName']).notEmpty()
+    body('name').notEmpty()
         .withMessage('Name is required!')
-        .isLength({ min: 2 })
+        .isLength({ min: 1 })
         .isString()
-        .trim()
         .escape()
-        .withMessage(' First name should be at least 2 chars!'),
+        .withMessage(' Name should be at least one chars!'),
     body('email').isEmail().normalizeEmail().withMessage('Not a valid e-mail adress!'),
     body('password').isStrongPassword()
         .matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/).withMessage("Password must include one lowercase character, one uppercase character, a number, a special character, and at least 8 chars."),

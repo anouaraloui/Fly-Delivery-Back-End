@@ -169,11 +169,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {
-                    "type": "string",
-                    "example": "exemple"
-                  },
-                  "lastName": {
+                  "name": {
                     "type": "string",
                     "example": "exemple"
                   },
@@ -301,8 +297,7 @@
                       "example": [
                         {
                           "_id": "string",
-                          "firstName": "string",
-                          "lastName": "string",
+                          "name": "string",
                           "email": "exemple@email.com",
                           "phone": "00 000 000",
                           "role": "customer",
@@ -467,8 +462,7 @@
                       "example": [
                         {
                           "_id": "string",
-                          "firstName": "string",
-                          "lastName": "string",
+                          "name": "string",
                           "email": "exemple@email.com",
                           "phone": "00 000 000",
                           "role": "customer",
@@ -1076,8 +1070,7 @@
     "schemas": {
       "User": {
         "required": [
-          "firstName",
-          "lastName",
+          "name",
           "email",
           "password",
           "role",
@@ -1088,11 +1081,7 @@
         ],
         "type": "object",
         "properties": {
-          "firstName": {
-            "type": "string",
-            "example": "exemple"
-          },
-          "lastName": {
+          "name": {
             "type": "string",
             "example": "exemple"
           },

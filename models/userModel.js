@@ -8,13 +8,9 @@ const { Schema } = mongoose;
 
 let userSchema= new Schema(
     {
-        firstName: {
+        name: {
             type: String,
         required: true
-        },
-        lastName: {
-            type: String,
-            required: false
         },
         email: {
             type: String,

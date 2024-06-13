@@ -18,14 +18,14 @@ const transport = nodemailer.createTransport({
 });
 
 //  Email for admin when created the first time
-const welcomeAdmin = (email, firstName, lastName, password) => {
+const welcomeAdmin = (email, name, password) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
         subject: "Welcome Admin to your application",
         html: `<div>
         <h2>Welcome to Fly Delivery! </h2>
-        <h2> Dear ${firstName} ${lastName}</h2> 
+        <h2> Dear ${name}</h2> 
         <p>To can enter in our company, please enter this email and this password :<p>       
         <p>email: ${email}</p>
         <p>password: ${password}</p>
@@ -36,14 +36,14 @@ const welcomeAdmin = (email, firstName, lastName, password) => {
 };
 
 // Email for user when to forget password
-const emailForgotPassword = (email, firstName, lastName, token, userId) => {
+const emailForgotPassword = (email, name, token, userId) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
         subject: "Reset Password",
         html: `<div>
         <h1>Reset Password!</h1>
-        <h2>Hello ${firstName} ${lastName},<h2>
+        <h2>Hello ${name},<h2>
         <p>Somebody requested a new password for the account associated with your email.</p>
         <p>No changes have been made to your account yet.</p>
         <p>You can reset your password by clicking the link below:<p>
@@ -58,13 +58,13 @@ const emailForgotPassword = (email, firstName, lastName, token, userId) => {
 };
 
 // Email for user to reset password
-const emailResetPassword = (email, firstName, lastName) => {
+const emailResetPassword = (email, name) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
         subject: "Password change confirmation",
         html: `<div>
-        <h2> Dear ${firstName} ${lastName}</h2>
+        <h2> Dear ${name}</h2>
         <h2>Your password has been changed successfully. </h2>
         <p>This is to confirm that the password for your account has been successfully changed. Your account is now secured with the new password that you have set.</p>
         <p>If you did not change your password, please contact us immediately to report any unauthorized access to your account.</p>
@@ -76,14 +76,14 @@ const emailResetPassword = (email, firstName, lastName) => {
 };
 
 // Email to the user when registering for this application
-const welcome = (email, firstName, lastName) => {
+const welcome = (email, name) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
         subject: "Welcome our application",
         html: `<div>
         <h2>Welcome to Fly Delivery! </h2>
-        <h2> Dear ${firstName} ${lastName}</h2>        
+        <h2> Dear ${name}</h2>        
         <p>We wanted to take a moment to welcome you to Fly Delivery. We are excited to have you as a client and appreciate your trust in us.</p>
         <p>As a new client, you can expect to receive top-notch customer service, high-quality products and services, and timely communication from us. We are committed to meeting and exceeding your expectations.</p>
         <p>Thank you again for choosing Fly Delivery. We look forward to working with you!<p>     
@@ -94,14 +94,14 @@ const welcome = (email, firstName, lastName) => {
 };
 
 // Email to user when changing password
-const welcomeBack = (email, firstName, lastName) => {
+const welcomeBack = (email, name) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
         subject: 'Welcome back to our team',
         html: `<div>
         <h2>Welcome back to Fly Delivery! </h2>
-        <h2> Dear ${firstName} ${lastName}</h2>   
+        <h2> Dear ${name}</h2>   
         <p>This is to confirm that the password for your account has been successfully changed. Your account is now secured with the new password that you have set.</p>
         <p>If you did not change your password, please contact us immediately to report any unauthorized access to your account.</p>
         <p>Thank you again for choosing Fly Delivery. We look forward to working with you!<p>     
@@ -112,13 +112,13 @@ const welcomeBack = (email, firstName, lastName) => {
 };
 
 // Email to the user to validate the account
-const validationAccount = (email, firstName, lastName, token, userId) => {
+const validationAccount = (email, name, token, userId) => {
     transport.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
         subject: 'Validation your account',
         html: `<div>
-        <h2>Hello ${firstName} ${lastName}</h2>
+        <h2>Hello ${name}</h2>
         <p>Are you ready to gain access to all of the assets we prepared for clients of Fly Delivery?</p>
         <p>First, you must complete your registration by clicking on the button below: </p>
         <a href=http://localhost:3000/auth/validationAccount?${token}&${userId}/>Verify Now</a>

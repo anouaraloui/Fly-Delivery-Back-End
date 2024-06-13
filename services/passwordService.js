@@ -21,7 +21,7 @@ export const requestPasswordReset = async (email) => {
             token: hash,
             createdAt: Date.now()
         }).save();
-        emailForgotPassword(user.email, user.firstName, user.lastName, resetToken, user._id);
+        emailForgotPassword(user.email, user.name, resetToken, user._id);
         return { status: 200, success: true, message: 'Please check your email for reset your password!' };
     } catch (error) {
         return { status: 444, success: false, message: err.message };
@@ -50,7 +50,7 @@ export const resetPassword = async (userId, token, password) => {
                 new: true
             }
         );
-        emailResetPassword(user.email, user.firstName, user.lastName);
+        emailResetPassword(user.email, user.name);
         await passwordResetToken.deleteOne();
         return { status: 200, success: true, message: 'Your password has been changed successfully' };
     } catch (error) {

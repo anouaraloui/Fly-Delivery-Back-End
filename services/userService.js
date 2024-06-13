@@ -27,7 +27,7 @@ export const validationAccountClientService = async (token) => {
                     }
                 }
             );
-        welcome(verifyUser.email, verifyUser.firstName, verifyUser.lastName);
+        welcome(verifyUser.email, verifyUser.name);
         return { status: 200, success: true, message: 'Your account is verify now', dataToken: decodedVerified };
 
     } catch (error) {
@@ -50,7 +50,7 @@ export const confirmAccount = async (id) => {
                         }
                     }
                 );
-                welcome(user.email, user.firstName, user.lastName);
+                welcome(user.email, user.name);
                 return { status: 200, success: true, message: "Successful Operation Account Confirmed" };
             };
         }).catch((err) => {
@@ -78,14 +78,15 @@ export const register = async (data) => {
                     {
                         userId: user._id,
                         role: user.role,
-                        codeValidation: codeValidationAccount
+                        codeValidation: codeValidationAccount,
+                        name: user.name
                     },
                     process.env.VALIDATION_TOKEN,
                     { expiresIn: '48h' },
 
                 );
                 if (data.role === "Customer") {
-                    validationAccount(user.email, user.firstName, user.lastName, token, user._id);
+                    validationAccount(user.email, user.name, token, user._id);
                     console.log("token for validation account: ", token);
                 };
                 await user.save();
@@ -111,8 +112,8 @@ export const loginUserService = async (email, password) => {
                         success: true,
                         message: "You have successfully logged in.",
                         userId: user._id,
-                        token: jwt.sign({ userId: user._id, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }),
-                        refreshToken: jwt.sign({ userId: user._id, role: user.role }, process.env.REFRESH_TOKEN, { expiresIn: '2d' })
+                        token: jwt.sign({ userId: user._id, role: user.role, name: user.name }, process.env.ACCESS_TOKEN, { expiresIn: '1d' }),
+                        refreshToken: jwt.sign({ userId: user._id, role: user.role, name: user.name }, process.env.REFRESH_TOKEN, { expiresIn: '2d' })
                     };
                 })
                 .catch(error => {
@@ -205,7 +206,7 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
                                             }
                                         }
                                     );
-                                    welcomeBack(user.email, user.firstName, user.lastName);
+                                    welcomeBack(user.email, user.name);
                                     return { status: 200, success: true, message: 'Password has been changed' };
                                 };
                             };

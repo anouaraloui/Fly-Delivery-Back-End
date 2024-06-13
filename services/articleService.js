@@ -1,4 +1,5 @@
 import Article from "../models/articleModel.js";
+import User from "../models/userModel.js";
 
 
 // Service for create new article
@@ -59,12 +60,12 @@ export const getAticleById = async (id) => {
 };
 
 // Service to display all article created by the same restaurant
-export const getArticleByRestaurant = async (data,restaurant) => {
+export const getArticleByRestaurant = async (data, restaurant, nameRestaurant) => {
     try {       
     if (!data.page) data.page = 1;
     if (!data.limit) data.limit = 30;
     const skipPage = (data.page - 1) * data.limit;
-    const articleList = await Article.find({ restaurantId: restaurant})
+    const articleList = await User.find({name: nameRestaurant}) && await Article.find({ restaurantId: restaurant })
                         .skip(skipPage)
                         .limit(parseInt(data.limit))
                         .exec();

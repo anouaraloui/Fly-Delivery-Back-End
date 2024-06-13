@@ -3,7 +3,7 @@ import findUserId from "../utils/findUserId.js";
 
 // Controller for create new article
 export const createArticleController = async (req, res) => {
-    const restaurant = await findUserId(req);
+    const restaurant = (await findUserId(req)).userId;
     const createArticleService = await createArticle(req.body, restaurant);
     return res.status(createArticleService.status).json({ response: createArticleService });
 };
@@ -14,11 +14,16 @@ export const getAllController = async (req, res) => {
     return res.status(getAllService.status).json({ response: getAllService });
 };
 
-// Controller for display articles created by the some restaurant
+// Controller for display all articles created by the some restaurant
 export const getArticleByRestaurantController = async (req, res) => {
-    const restaurant = await findUserId(req);
-    const getArticleByRestaurantService = await getArticleByRestaurant(req.query, restaurant);
-    return res.status(getArticleByRestaurantService.status).json({ response: getArticleByRestaurantService });
+    const restaurant = (await findUserId(req)).userId;
+    const tokenName = (await findUserId(req)).name;
+    const {name} = req.params;
+    if (tokenName != name) return res.status(404).json({ message: 'Check your real name!' })
+    else {
+        const getArticleByRestaurantService = await getArticleByRestaurant(req.query, restaurant, name);
+        return res.status(getArticleByRestaurantService.status).json({ response: getArticleByRestaurantService });
+    };
 };
 
 // Controller to display an article with id
@@ -30,7 +35,7 @@ export const getAticleByIdController = async(req, res) => {
 
 // Controller for update article with id 
 export const updateArticleController = async (req, res) => {
-    const userId = await findUserId(req);
+    const userId = (await findUserId(req)).userId;
     const { id } = req.params;
     const updateArticleService = await updateArticle(id, userId, req.body);
     return res.status(updateArticleService.status).json({ response: updateArticleService });
@@ -38,7 +43,7 @@ export const updateArticleController = async (req, res) => {
 
 // Controller for delete article with id
 export const deleteArticleController = async (req, res) => {
-    const restaurant = await findUserId(req);
+    const restaurant = (await findUserId(req)).userId;
     const { id } = req.params;
     const deleteArticleService = await deleteArticle(id, restaurant);
     return res.status(deleteArticleService.status).json({ response: deleteArticleService });
@@ -46,7 +51,7 @@ export const deleteArticleController = async (req, res) => {
 
 // Controller to remove all articles created by the same restaurant
 export const deleteAllArticlesController = async (req, res) => {
-    const restaurant = await findUserId(req);
+    const restaurant = (await findUserId(req)).userId;
     const deleteAllArticlesService = await deleteAllArticles(restaurant);
     return res.status(deleteAllArticlesService.status).json({ response: deleteAllArticlesService });
 };

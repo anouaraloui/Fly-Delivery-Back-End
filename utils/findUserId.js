@@ -7,7 +7,7 @@ const findUserId = async (req) => {
     try {
     const restaurantToken = await req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(restaurantToken, process.env.ACCESS_TOKEN);
-      return decoded.userId;
+      return {userId: decoded.userId, name: decoded.name};
     } catch (error) {
       console.error('Error verifying token:', error);
       throw new Error('Unauthorized');

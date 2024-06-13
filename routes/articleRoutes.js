@@ -8,31 +8,31 @@ import { validatorId } from "../middlewares/idValidator.js";
 const router = express.Router();
 
 // Route for create a new article
-router.post('/article', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
+router.post('/restaurant/article', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 validateArticle, createArticleController);
 
-// Route for display all articles
-router.get('/article',isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
+// Route for display all articles to the customer
+router.get('/articles',isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next), 
 getAllController);
 
 // Route for display all articles created by the same restaurant
-router.get('/article/restaurant/myarticles', (req, res, next) => role(['Restaurant'], req, res, next),
+router.get('/restaurant/:name/articles/myarticles', (req, res, next) => role(['Restaurant'], req, res, next),
 getArticleByRestaurantController);
 
 // Route to display an article whose identifier is known
-router.get('/article/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
+router.get('articles/:id', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
 getAticleByIdController);
 
 // Route to update an article
-router.put('/article/:id', isAuth, (req, res, next) => role([ 'Restaurant' ], req, res, next), 
+router.put('/restaurant/articles/:id', isAuth, (req, res, next) => role([ 'Restaurant' ], req, res, next), 
 validatorId, updateArticleController);
 
 // Route for delete an article
-router.delete('/article/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
+router.delete('/restaurant/articles/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 deleteArticleController);
 
 // Route to delete all articles created by the same restaurant
-router.delete('/article', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
+router.delete('/restaurant/articles', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 deleteAllArticlesController);
 
 export default router;

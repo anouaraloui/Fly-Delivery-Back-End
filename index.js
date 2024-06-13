@@ -8,7 +8,6 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json' assert { type: "json" };
 import articleRoutes from './routes/articleRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
-import restaurantRoutes from './routes/restaurantRoutes.js';
 
 const app = express();
 
@@ -25,7 +24,6 @@ app.use('/api-swagger-test', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(userRoutes);
 app.use(articleRoutes);
 app.use(orderRoutes);
-app.use(restaurantRoutes);
 
 app.use((error, req, res, next) => {
     res.status(500).json({ error: error.message });
