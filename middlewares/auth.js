@@ -11,7 +11,7 @@ const isAuth = (req, res, next) => {
         if(req.body.userId && req.body.userId !== userId) throw new Error('Invalid user ID');
         else next();
     } catch (error) {
-        res.status(401).json({ error: 'Unauthorized! "Invalid token"'}); 
+        res.status(401).json({ error: 'Unauthorized! Invalid token'}); 
     };
 };
 

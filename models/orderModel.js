@@ -25,7 +25,12 @@ let orderSchema = new Schema(
             ref: 'User',
             required: false
         },
-        status: {
+        restaurantStatus: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
+        deliverymanStatus: {
             type: Boolean,
             default: false,
             required: true
