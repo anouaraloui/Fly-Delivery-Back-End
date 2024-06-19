@@ -9,6 +9,7 @@ import swaggerDocument from './swagger.json' assert { type: "json" };
 import articleRoutes from './routes/articleRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import restaurantRoutes from './routes/restaurantRoute.js';
+import deliveryManRoutes from './routes/delieveryManRoutes.js';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(userRoutes);
 app.use(articleRoutes);
 app.use(orderRoutes);
 app.use(restaurantRoutes);
+app.use(deliveryManRoutes);
 
 app.use((error, req, res, next) => {
     res.status(500).json({ error: error.message });
