@@ -12,11 +12,11 @@ export const allOrdersRestaurant = async (userId) => {
 };
 
 // Service to make the order decision
-export const orderDecision = async (id, userId, status, next) => {
+export const orderDecision = async (id, userId, status) => {
     return await Order.findById(id).where('restaurantId').equals(userId)
     .then(async (order) => {
         if(!order) return { status: 404, succes: false, message: 'Not found!' };
-        if(order.orderStatus) return { status: 400, succes: false, message: 'Your decision already send' };
+        if(order.orderStatus || order.restaurantStatus != null ) return { status: 400, succes: false, message: 'Your decision already send' };
         await Order.findByIdAndUpdate(
             {_id: id},
             {
@@ -25,8 +25,28 @@ export const orderDecision = async (id, userId, status, next) => {
                 }
             }
         );
-        return { status: 200, succes: true, message: "Your answer is succussffully send", next };
+        return { status: 200, succes: true, message: "Your answer is succussffully send" };
     }).catch((err) => {
         return { status: 400, succes: false, message: err.message }; 
     });
 };
+
+// Service to update the order decision
+export const changeOrderDecision = async (id, userId, status) => {
+    return await Order.findById(id).where('restaurantId').equals(userId)
+    .then(async (order) => {
+        if(!order) return { status: 404, succes: false, message: 'Not found!' };
+        if(order.orderStatus != null) return { status: 400, succes: false, message: 'You cannot change your decision!' };
+        await Order.findByIdAndUpdate(
+            {_id: id},
+            {
+                $set: {
+                    "restaurantStatus": status
+                }
+            }
+        );
+        return { status: 200, succes: true, message: "Your answer is succussffully send" };
+    }).catch((err) => {
+        return { status: 400, succes: false, message: err.message }; 
+    });
+}
