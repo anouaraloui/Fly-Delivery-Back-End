@@ -10,3 +10,23 @@ export const allOrdersRestaurant = async (userId) => {
         return { status: 400, succes: false, message: err.message };  
     });
 };
+
+// Service to make the order decision
+export const orderDecision = async (id, userId, status, next) => {
+    return await Order.findById(id).where('restaurantId').equals(userId)
+    .then(async (order) => {
+        if(!order) return { status: 404, succes: false, message: 'Not found!' };
+        if(order.orderStatus) return { status: 400, succes: false, message: 'Your decision already send' };
+        await Order.findByIdAndUpdate(
+            {_id: id},
+            {
+                $set: {
+                    "restaurantStatus": status
+                }
+            }
+        );
+        return { status: 200, succes: true, message: "Your answer is succussffully send", next };
+    }).catch((err) => {
+        return { status: 400, succes: false, message: err.message }; 
+    });
+};

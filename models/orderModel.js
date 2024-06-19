@@ -27,13 +27,18 @@ let orderSchema = new Schema(
         },
         restaurantStatus: {
             type: Boolean,
-            default: false,
-            required: true
+            default: null,
+            required: false
         },
         deliverymanStatus: {
             type: Boolean,
-            default: false,
-            required: true
+            default: null,
+            required: false
+        },
+        orderStatus: {
+            type: Boolean,
+            default: null,
+            required: false
         },
         numberPieces : {
             type: Number,
