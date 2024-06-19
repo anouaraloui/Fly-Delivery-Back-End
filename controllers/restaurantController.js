@@ -18,11 +18,11 @@ export const orderDecisionController = async (req, res) => {
 };
 
 // Controller to update the order decision
-export const changeOrderDecisionController = async (req, res, next) => {
+export const changeOrderDecisionController = async (req, res) => {
     const { id } = req.params;
     const userId = (await findUserId(req)).userId;
     const status = req.body.status;
-    const changeOrderDecisionService = await changeOrderDecision(id, userId, status, next);
+    const changeOrderDecisionService = await changeOrderDecision(id, userId, status);
     return res.status(changeOrderDecisionService.status).json({ response: changeOrderDecisionService });
 };
 

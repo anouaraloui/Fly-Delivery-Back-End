@@ -49,4 +49,4 @@ export const changeOrderDecision = async (id, userId, status) => {
     }).catch((err) => {
         return { status: 400, succes: false, message: err.message }; 
     });
-}
+};

@@ -81,7 +81,7 @@ export const updateOrder = async (userId, id, data) => {
     .then(async (result) => {
         if(!result) return { status: 404, success: false, message: 'Order not found!'};
         else {
-            if(result.status) return { status: 400, success: false, message: 'You can not update this order!'};
+            if(result.orderStatus != null || result.restaurantStatus != null) return { status: 400, success: false, message: 'You can not update this order!'};
             else{
                 const newNumberPieces =  result.numberPieces + data.numberPieces;
                 const newPriceOrder = result.pricePieces * newNumberPieces;
@@ -108,6 +108,7 @@ export const deleteOrder = async (userId, id) => {
     return await Order.findById(id).where('clientId').equals(userId)
     .then(async(order) => {
         if(!order) return { status: 404, success: false, message: 'Order not found!' };
+        if(order.orderStatus != null || order.restaurantStatus != null) return { status: 400, success: false, message: 'You can not delete this order!'};
         else{
             await Order.findByIdAndDelete(id);
             return { status: 200, success: true, message: 'Order is deleted' };
@@ -123,7 +124,7 @@ export const deleteAllOrders = async (userId) => {
     .then(async(result) => {
         if(result.length == 0) return { status: 404, success: false, message: 'You have not yet an order!' };
         else {
-            await Order.deleteMany({ clientId: userId });
+            await Order.deleteMany({ clientId: userId }).where('orderStatus' && 'restaurantStatus').equals(null);
             return { status: 200, success: true, message: 'All your orders are deleted' };
         };
     }).catch((err) => {
