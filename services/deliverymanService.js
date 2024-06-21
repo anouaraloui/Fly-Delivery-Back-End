@@ -1,4 +1,5 @@
 import Order from "../models/orderModel.js";
+import OrdersAccepted from "../models/orderAcceptedModel.js";
 
 // Service for display all orders available
 export const getAllOrdersAvailable = async (data) => {
@@ -20,10 +21,12 @@ export const getAllOrdersAvailable = async (data) => {
 };
 
 // Service to accept or reject an order
-export const decisionOrder = async (id, userId, decision) => {
-    return await Order.findById(id).where('restaurantStatus').equals(true).$where('this.deliverymanStatus != true')
-    .then( async (order) => {
-        if(!order) return { status: 404, succes: false, message: 'There are no orders available yet' };
+export const decisionOrder =  async (id, userId, decision) => {
+    try {
+        const order = await Order.findOne({_id: id}).where('restaurantStatus').equals(true).$where('this.deliverymanStatus != true');
+        if (!order) {
+            return { status: 404, success: false, message: 'There are no orders available yet' };
+        };
         await Order.findByIdAndUpdate(
             {_id: id},
             {
@@ -31,10 +34,27 @@ export const decisionOrder = async (id, userId, decision) => {
                     "deliverymanId": userId,
                     "deliverymanStatus": decision
                 }
-            }
-        );        
-        return { status: 200, succes: true, message: "Your answer is succussffully send" };
-    }).catch((err) => {
-        return { status: 400, succes: false, message: err.message }; 
-    });
+            },
+            { new: true }
+        );
+        if (decision === true) {            
+            const completedOrder = new OrdersAccepted({
+                orderId: order._id,
+                deliverymanId: userId,
+                restaurantStatus: order.restaurantStatus,
+                deliverymanStatus: decision,
+                articleId: order.articleId,
+                clientId: order.clientId,
+                restaurantId: order.restaurantId,
+                orderStatus: order.orderStatus,
+                numberPieces: order.numberPieces,
+                pricePieces: order.pricePieces,
+                priceOrder: order.priceOrder    
+            });
+            await completedOrder.save();
+        };
+        return { status: 200, success: true, message: "Your answer is successfully sent" };
+    } catch (err) {
+        return { status: 400, success: false, message: err.message };
+    };
 };
