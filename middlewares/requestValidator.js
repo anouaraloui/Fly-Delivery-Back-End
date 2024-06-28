@@ -43,12 +43,10 @@ export const validateRequestPasswordReset = [
 export const validateArticle = [
     body('name').notEmpty().withMessage("Article name is required!"),
     body('picture').optional(),
-    body('price').notEmpty().withMessage("Article price is required!"),
-    body('rating').default(0),
-    body('reviews').default(0),
-    body('price').optional(),
+    body('price').notEmpty().withMessage("Article price is required!")
+    .isFloat({gt:0}).withMessage("Prise must be a positive number!"),
     body('information').notEmpty().withMessage("Article information is required!"),
-
+    body('discount').isFloat({min: 0, max:100}).withMessage("Discount percentage must be between 0 and 100%!"),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });

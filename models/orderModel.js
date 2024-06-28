@@ -32,13 +32,13 @@ let orderSchema = new Schema(
         },
         deliverymanStatus: {
             type: Boolean,
-            default: null,
-            required: false
+            default: false,
+            required: true
         },
         orderStatus: {
             type: Boolean,
-            default: null,
-            required: false
+            default: false,
+            required: true
         },
         numberPieces : {
             type: Number,
