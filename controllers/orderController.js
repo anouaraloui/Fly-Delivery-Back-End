@@ -1,4 +1,4 @@
-import { addNewOrder, deleteAllOrders, deleteOrder, getAllOrder, updateOrder } from "../services/orderService.js";
+import { addNewOrder, changeOrderDecision, decisionOrder, deleteAllOrders, deleteOrder, getAllOrder, orderDecision, updateOrder } from "../services/orderService.js";
 import findUserId from "../utils/findUserId.js";
 
 // Controller for create new order
@@ -11,7 +11,8 @@ export const addNewOrderController = async(req, res) => {
 // Controller for display all orders created by the same user
 export const getAllOrderController = async (req, res) => {
     const userId = (await findUserId(req)).userId;
-    const getAllOrderService = await getAllOrder(userId, req.query);
+    const role = (await findUserId(req)).role;
+    const getAllOrderService = await getAllOrder(userId, role, req.query);
     return res.status(getAllOrderService.status).json({ response: getAllOrderService });
 };
 
@@ -39,3 +40,29 @@ export const deleteAllOrdersController = async (req, res) => {
     return res.status(deleteAllOrdersService.status).json({ response: deleteAllOrdersService });
 };
 
+// Controller to make the order decision by the restaurant
+export const orderDecisionController = async (req, res) => {
+    const { id } = req.params;
+    const userId = (await findUserId(req)).userId;
+    const status = req.body.status;
+    const orderDecisionService = await orderDecision(id, userId, status);
+    return res.status(orderDecisionService.status).json({ response: orderDecisionService });
+};
+
+// Controller to update the order decision by the restaurant
+export const changeOrderDecisionController = async (req, res) => {
+    const { id } = req.params;
+    const userId = (await findUserId(req)).userId;
+    const status = req.body.status;
+    const changeOrderDecisionService = await changeOrderDecision(id, userId, status);
+    return res.status(changeOrderDecisionService.status).json({ response: changeOrderDecisionService });
+};
+
+// Controller for accept or reject an order by the deliveryman
+export const decisionOrderController = async (req, res) => {
+    const { id } = req.params;
+    const userId = ((await findUserId(req)).userId);
+    const decision = req.body.decision;
+    const decisionOrderService = await decisionOrder(id, userId, decision);
+    return res.status(decisionOrderService.status).json({ response: decisionOrderService });
+};
