@@ -5,8 +5,7 @@ This project having as objectives the design and the realization of a platform o
 ● Restaurant management </br>
 ● Deliveryman management </br>
 ● Client management </br>
-● Order management </br>
-● Schopping cart management </br>
+● Order management </br
 ● Article management </br>
 ● Ingredients management </br>
 <h2>Main Features:</h2> </br>
@@ -39,10 +38,6 @@ This project having as objectives the design and the realization of a platform o
 ● Create order </br>
 ● Update order </br>
 ● Delete order </br>
-<h3>Schopping cart management </h3> </br>
-● Create item </br>
-● Update item </br>
-● Delete item </br>
 <h3>Article management </h3> </br>
 ● Create article </br>
 ● Update article </br>
