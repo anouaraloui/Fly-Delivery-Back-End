@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { requestPasswordReset, resetPassword } from "../services/passwordService.js";
-import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount, listUsersUnvalidated, loginUserService } from "../services/userService.js";
+import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount, listUsersUnvalidated, loginUserService, deleteUser } from "../services/userService.js";
 
 
 config();
@@ -75,4 +75,11 @@ export const updatePasswordController = async (req, res) => {
         req.body.confirmPassword,
         token);
     return res.status(updatePasswordService.status).json({ response: updatePasswordService });
+};
+
+// Controller for delete User
+export const deleteUserController = async (req, res) => {
+    const {id} = req.params;
+    const deleteUserService = await deleteUser(id);
+    return res.status(deleteUserService.status).json({ response: deleteUserService });
 };

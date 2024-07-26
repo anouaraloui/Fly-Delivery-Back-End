@@ -141,7 +141,7 @@ export const listUsers = async (data) => {
             .exec();
         const countList = await User.countDocuments();
         if (countList == 0) return { status: 204, success: true, message: 'There are no article!' };
-        if (usersList) return { status: 200, success: true, message: 'Succussffully operation', page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
+        if (usersList) return { status: 200, success: true, message: 'Successfully operation', page: data.page, limit: data.limit, totalUsers: countList, users: usersList };
         else return { status: 404, success: false, error: 'Users not found!' };
     } catch (error) {
         return { status: 500, success: false, message: error.message };
@@ -218,4 +218,14 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
     } catch (error) {
         return { status: 500, success: false, message: error.message };
     };
+};
+
+// Service for delete user(Customer/Restaurant/Delieveryman)
+export const deleteUser = async(id) => {
+    try {
+     const user = await User.findByIdAndDelete({ _id: id });
+     return { status: 200, success: true, message: `${user.name} is successfully deleted` };
+    } catch (error) {
+        return { status: 500, success: false, message: error.message };
+    };       
 };

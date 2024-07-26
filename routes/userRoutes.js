@@ -1,5 +1,5 @@
 import express from "express";
-import {  loginController, getUser, listUsersController, resetPasswordController, resetPasswordRequestController,  signUpController, updatePasswordController, validationAccountClientController, confirmAccountController, listUsersUnvalidatedController} from "../controllers/userControllers.js";
+import {  loginController, getUser, listUsersController, resetPasswordController, resetPasswordRequestController,  signUpController, updatePasswordController, validationAccountClientController, confirmAccountController, listUsersUnvalidatedController, deleteUserController} from "../controllers/userControllers.js";
 import isAuth from "../middlewares/auth.js";
 import { ValidateRequestRegister, validateRequestPasswordReset } from "../middlewares/requestValidator.js";
 import { validatorId } from "../middlewares/idValidator.js";
@@ -41,5 +41,8 @@ getUser);
 //Route for update password
 router.patch('/users/password/change', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
 updatePasswordController);
+
+// Route for delete user
+router.delete('/users/:id', isAuth, validatorId, (req, res, next) => role(['Admin'], req, res, next), deleteUserController);
 
 export default router;
