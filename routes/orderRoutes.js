@@ -1,7 +1,7 @@
 import express from "express";
 import { role } from "../middlewares/checkRole.js";
 import isAuth from "../middlewares/auth.js";
-import { addNewOrderController, changeOrderDecisionController, decisionOrderController, deleteAllOrdersController, deleteOrderController, getAllOrderController, orderDecisionController, updateOrderController } from "../controllers/orderController.js";
+import { addNewOrderController, changeOrderDecisionController, decisionOrderController, deleteAllOrdersController, deleteOrderController, getAllOrdersController, orderDecisionController, updateOrderController } from "../controllers/orderController.js";
 import checkArticle from "../middlewares/checkArticle.js";
 import { validatorId } from "../middlewares/idValidator.js";
 
@@ -13,7 +13,7 @@ checkArticle, addNewOrderController);
 
 // Route for display all orders created by the same user
 router.get('/orders', isAuth, (req, res, next) => role(['Admin', 'Restaurant', 'Deliveryman', 'Customer'], req, res, next),
-getAllOrderController);
+getAllOrdersController);
 
 // Route for update an order
 router.patch('/orders/:id', isAuth, (req, res, next) => role(['Admin', 'Customer'], req, res, next),

@@ -57,12 +57,27 @@ export const addNewOrder = async (article, userId, data) => {
         });
 };
 
-// Service for display all orders created by the same user OR received at the same restaurant OR available to the deliveryman
-export const getAllOrder = async (userId, role, data) => {
+// Service for display all orders and orders created by the same user OR received at the same restaurant OR available to the deliveryman
+export const getAllOrders = async (userId, role, data) => {
     try {
         if (!data.page) data.page = 1;
         if (!data.limit) data.limit = 10;
         const skipPage = (data.page - 1) * data.limit;
+        if (role === "Admin") {
+            try {
+                const orders = await Order.find()
+                    .sort({ [data.sortBy]: data.createdAt })
+                    .skip(data.skip)
+                    .limit(data.limit)
+                    .where('createdAt').lt(data.createdAtBefore).gt(data.createdAtAfter);
+                const count = await Order.count();
+                if (count != 0 && orders.length === 0) return { status: 200, succes: true, message: "No orders in this period " };
+                if (count === 0 || orders.length === 0) return { status: 200, succes: true, message: "No orders yet " };
+                return { status: 200, succes: true, page: data.page, lmit: data.limit, listOrders: count, orders: orders };
+            } catch (error) {
+                return { status: 400, success: false, message: error.message };
+            }
+        }
         if (role === "Customer") {
             return await Order.find({ clientId: userId })
                 .skip(skipPage).limit(data.limit).exec()
@@ -165,41 +180,41 @@ export const deleteAllOrders = async (userId) => {
 // Service to make the order decision by the restaurant
 export const orderDecision = async (id, userId, status) => {
     return await Order.findById(id).where('restaurantId').equals(userId)
-    .then(async (order) => {
-        if(!order) return { status: 404, succes: false, message: 'Not found!' };
-        if(order.orderStatus || order.restaurantStatus != null ) return { status: 400, succes: false, message: 'Your decision already send' };
-        await Order.findByIdAndUpdate(
-            {_id: id},
-            {
-                $set: {
-                    "restaurantStatus": status
+        .then(async (order) => {
+            if (!order) return { status: 404, succes: false, message: 'Not found!' };
+            if (order.orderStatus || order.restaurantStatus != null) return { status: 400, succes: false, message: 'Your decision already send' };
+            await Order.findByIdAndUpdate(
+                { _id: id },
+                {
+                    $set: {
+                        "restaurantStatus": status
+                    }
                 }
-            }
-        );
-        return { status: 200, succes: true, message: "Your answer is succussffully send" };
-    }).catch((err) => {
-        return { status: 400, succes: false, message: err.message }; 
-    });
+            );
+            return { status: 200, succes: true, message: "Your answer is successfully send" };
+        }).catch((err) => {
+            return { status: 400, succes: false, message: err.message };
+        });
 };
 
 // Service to update the order decision by the restaurant
 export const changeOrderDecision = async (id, userId, status) => {
     return await Order.findById(id).where('restaurantId').equals(userId)
-    .then(async (order) => {
-        if(!order) return { status: 404, succes: false, message: 'Not found!' };
-        if(order.orderStatus != null) return { status: 400, succes: false, message: 'You cannot change your decision!' };
-        await Order.findByIdAndUpdate(
-            {_id: id},
-            {
-                $set: {
-                    "restaurantStatus": status
+        .then(async (order) => {
+            if (!order) return { status: 404, succes: false, message: 'Not found!' };
+            if (order.orderStatus != null) return { status: 400, succes: false, message: 'You cannot change your decision!' };
+            await Order.findByIdAndUpdate(
+                { _id: id },
+                {
+                    $set: {
+                        "restaurantStatus": status
+                    }
                 }
-            }
-        );
-        return { status: 200, succes: true, message: "Your answer is succussffully send" };
-    }).catch((err) => {
-        return { status: 400, succes: false, message: err.message }; 
-    });
+            );
+            return { status: 200, succes: true, message: "Your answer is successfully send" };
+        }).catch((err) => {
+            return { status: 400, succes: false, message: err.message };
+        });
 };
 
 // Service to accept or reject an order by the deliveryman
@@ -220,7 +235,7 @@ export const decisionOrder = async (id, userId, decision) => {
                     }
                 },
                 { new: true }
-            );            
+            );
             const completedOrder = new OrdersAccepted({
                 orderId: order._id,
                 deliverymanId: userId,
@@ -234,7 +249,7 @@ export const decisionOrder = async (id, userId, decision) => {
                 pricePieces: order.pricePieces,
                 priceOrder: order.priceOrder
             });
-            await completedOrder.save();            
+            await completedOrder.save();
         };
         return { status: 200, success: true, message: "Your answer is successfully sent" };
     } catch (err) {

@@ -1,4 +1,4 @@
-import { addNewOrder, changeOrderDecision, decisionOrder, deleteAllOrders, deleteOrder, getAllOrder, orderDecision, updateOrder } from "../services/orderService.js";
+import { addNewOrder, changeOrderDecision, decisionOrder, deleteAllOrders, deleteOrder, getAllOrders, orderDecision, updateOrder } from "../services/orderService.js";
 import findUserId from "../utils/findUserId.js";
 
 // Controller for create new order
@@ -9,11 +9,11 @@ export const addNewOrderController = async(req, res) => {
 };
 
 // Controller for display all orders created by the same user
-export const getAllOrderController = async (req, res) => {
+export const getAllOrdersController = async (req, res) => {
     const userId = (await findUserId(req)).userId;
     const role = (await findUserId(req)).role;
-    const getAllOrderService = await getAllOrder(userId, role, req.query);
-    return res.status(getAllOrderService.status).json({ response: getAllOrderService });
+    const getAllOrdersService = await getAllOrders(userId, role, req.query);
+    return res.status(getAllOrdersService.status).json({ response: getAllOrdersService });
 };
 
 // Controller for update an order
