@@ -47,7 +47,7 @@ export const addNewOrder = async (article, userId, data) => {
                             priceOrder: order.price * data.numberPieces
                         });
                         await order.save();
-                        return { status: 200, success: true, message: 'Order created', order: order };
+                        return { status: 201, success: true, message: 'Order created', order: order };
                     })
             } catch (error) {
                 return { status: 400, success: false, error: error.message };
@@ -67,13 +67,12 @@ export const getAllOrders = async (userId, role, data) => {
             try {
                 const orders = await Order.find()
                     .sort({ [data.sortBy]: data.createdAt })
-                    .skip(data.skip)
+                    .skip(skipPage)
                     .limit(data.limit)
                     .where('createdAt').lt(data.createdAtBefore).gt(data.createdAtAfter);
                 const count = await Order.count();
-                if (count != 0 && orders.length === 0) return { status: 200, succes: true, message: "No orders in this period " };
-                if (count === 0 || orders.length === 0) return { status: 200, succes: true, message: "No orders yet " };
-                return { status: 200, succes: true, page: data.page, lmit: data.limit, listOrders: count, orders: orders };
+                if (count != 0 && orders.length === 0 || count === 0 || orders.length === 0) return { status: 204, success: true, message: "No orders yet in this period " };
+                return { status: 200, success: true, page: data.page, lmit: data.limit, listOrders: count, orders: orders };
             } catch (error) {
                 return { status: 400, success: false, message: error.message };
             }
@@ -95,10 +94,10 @@ export const getAllOrders = async (userId, role, data) => {
         if (role === "Restaurant") {
             return await Order.find().where('restaurantId').equals(userId)
                 .then(async (orders) => {
-                    if (!orders) return { status: 404, succes: false, message: 'There is no order for your restaurant yet' };
-                    if (orders) return { status: 200, succes: true, order: orders };
+                    if (!orders) return { status: 404, success: false, message: 'There is no order for your restaurant yet' };
+                    if (orders) return { status: 200, success: true, order: orders };
                 }).catch((error) => {
-                    return { status: 400, succes: false, message: error.message };
+                    return { status: 400, success: false, message: error.message };
                 });
         };
         if (role === "Deliveryman") {
@@ -148,7 +147,7 @@ export const updateOrder = async (userId, id, data) => {
         });
 };
 
-// Service for delete order by id created by the same client
+// Service for delete order by id created by the same customer
 export const deleteOrder = async (userId, id) => {
     return await Order.findById(id).where('clientId').equals(userId)
         .then(async (order) => {
@@ -159,30 +158,30 @@ export const deleteOrder = async (userId, id) => {
                 return { status: 200, success: true, message: 'Order is deleted' };
             }
         }).catch((err) => {
-            return { status: 400, succes: false, message: err.message };
+            return { status: 400, success: false, message: err.message };
         });
 };
 
-// Service for delete all orders created by the same client
+// Service for delete all orders created by the same customer
 export const deleteAllOrders = async (userId) => {
     return await Order.find().where('clientId').equals(userId)
         .then(async (result) => {
-            if (result.length == 0) return { status: 404, success: false, message: 'You have not yet an order!' };
+            if (result.length == 0) return { status: 404, success: false, message: 'You have not yet an orders!' };
             else {
                 await Order.deleteMany({ clientId: userId }).where('orderStatus' && 'restaurantStatus').equals(null);
                 return { status: 200, success: true, message: 'All your orders are deleted' };
             };
         }).catch((err) => {
-            return { status: 400, succes: false, message: err.message };
+            return { status: 500, success: false, message: err.message };
         });
 };
 
 // Service to make the order decision by the restaurant
-export const orderDecision = async (id, userId, status) => {
+export const orderDecisionRestaurant = async (id, userId, status) => {
     return await Order.findById(id).where('restaurantId').equals(userId)
         .then(async (order) => {
-            if (!order) return { status: 404, succes: false, message: 'Not found!' };
-            if (order.orderStatus || order.restaurantStatus != null) return { status: 400, succes: false, message: 'Your decision already send' };
+            if (!order) return { status: 404, success: false, message: 'Order not found!' };
+            if (order.orderStatus || order.restaurantStatus != null) return { status: 400, success: false, message: 'Your decision already send' };
             await Order.findByIdAndUpdate(
                 { _id: id },
                 {
@@ -191,9 +190,9 @@ export const orderDecision = async (id, userId, status) => {
                     }
                 }
             );
-            return { status: 200, succes: true, message: "Your answer is successfully send" };
+            return { status: 200, success: true, message: "Your answer is sent successfully" };
         }).catch((err) => {
-            return { status: 400, succes: false, message: err.message };
+            return { status: 500, success: false, message: err.message };
         });
 };
 
@@ -201,8 +200,8 @@ export const orderDecision = async (id, userId, status) => {
 export const changeOrderDecision = async (id, userId, status) => {
     return await Order.findById(id).where('restaurantId').equals(userId)
         .then(async (order) => {
-            if (!order) return { status: 404, succes: false, message: 'Not found!' };
-            if (order.orderStatus != null) return { status: 400, succes: false, message: 'You cannot change your decision!' };
+            if (!order) return { status: 404, success: false, message: 'Order not found!' };
+            if (order.orderStatus != null) return { status: 400, success: false, message: 'You cannot change your decision!' };
             await Order.findByIdAndUpdate(
                 { _id: id },
                 {
@@ -211,14 +210,14 @@ export const changeOrderDecision = async (id, userId, status) => {
                     }
                 }
             );
-            return { status: 200, succes: true, message: "Your answer is successfully send" };
+            return { status: 200, success: true, message: "Your answer is sent successfully" };
         }).catch((err) => {
-            return { status: 400, succes: false, message: err.message };
+            return { status: 500, success: false, message: err.message };
         });
 };
 
 // Service to accept or reject an order by the deliveryman
-export const decisionOrder = async (id, userId, decision) => {
+export const orderDecisionDeliveryman = async (id, userId, decision) => {
     try {
         const order = await Order.findOne({ _id: id }).where('restaurantStatus').equals(true).where('deliverymanStatus').equals(false);
         if (!order) {
@@ -235,6 +234,7 @@ export const decisionOrder = async (id, userId, decision) => {
                     }
                 },
                 { new: true }
+                
             );
             const completedOrder = new OrdersAccepted({
                 orderId: order._id,
@@ -251,8 +251,27 @@ export const decisionOrder = async (id, userId, decision) => {
             });
             await completedOrder.save();
         };
-        return { status: 200, success: true, message: "Your answer is successfully sent" };
+        return { status: 200, success: true, message: "Your answer is sent successfully" };
     } catch (err) {
-        return { status: 400, success: false, message: err.message };
+        return { status: 500, success: false, message: err.message };
+    };
+};
+
+// Service for display all orders accepted to the deliveryman
+export const getAllOrdersAccepted = async (data) => {
+    try {
+        if (!data.page) data.page = 1;
+        if (!data.limit) data.limit = 10;
+        const skipPage = (data.page - 1) * data.limit;
+                const history = await OrdersAccepted.find()
+                    .sort({ [data.sortBy]: data.createdAt })
+                    .skip(skipPage)
+                    .limit(data.limit)
+                    .where('createdAt').lt(data.createdAtBefore).gt(data.createdAtAfter);
+                const count = await OrdersAccepted.count();
+                if(count === 0) return { status: 404, success: false, message: "There are no orders accepted" };
+                return { status: 200, success: true, page: data.page, lmit: data.limit, listOrdersAccepted: count, ordersAccepted: history };
+    } catch (error) {
+        return { status: 500, success: false, message: error.message };
     };
 };

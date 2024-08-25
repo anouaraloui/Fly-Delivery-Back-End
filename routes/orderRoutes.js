@@ -1,7 +1,7 @@
 import express from "express";
 import { role } from "../middlewares/checkRole.js";
 import isAuth from "../middlewares/auth.js";
-import { addNewOrderController, changeOrderDecisionController, decisionOrderController, deleteAllOrdersController, deleteOrderController, getAllOrdersController, orderDecisionController, updateOrderController } from "../controllers/orderController.js";
+import { addNewOrderController, changeOrderDecisionController, decisionOrderController, deleteAllOrdersController, deleteOrderController, getAllOrdersController, historyOrdersAccepted, orderDecisionController, updateOrderController } from "../controllers/orderController.js";
 import checkArticle from "../middlewares/checkArticle.js";
 import { validatorId } from "../middlewares/idValidator.js";
 
@@ -38,5 +38,9 @@ validatorId, changeOrderDecisionController);
 // Route for accept or reject an order by the deliveryman
 router.post('/orders/deliveryman/:id', isAuth, (req, res, next) => role(['Deliveryman'], req, res, next),
 validatorId, decisionOrderController);
+
+// Route for display all orders accepted to the deliveryman
+router.get('/orders/deliveryman/history', isAuth, (req, res, next) => role(['Deliveryman'], req, res, next),
+historyOrdersAccepted);
 
 export default router;

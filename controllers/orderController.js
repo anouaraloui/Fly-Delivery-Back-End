@@ -1,4 +1,4 @@
-import { addNewOrder, changeOrderDecision, decisionOrder, deleteAllOrders, deleteOrder, getAllOrders, orderDecision, updateOrder } from "../services/orderService.js";
+import { addNewOrder, changeOrderDecision,  orderDecisionDeliveryman, orderDecisionRestaurant, deleteAllOrders, deleteOrder, getAllOrders,  updateOrder, getAllOrdersAccepted } from "../services/orderService.js";
 import findUserId from "../utils/findUserId.js";
 
 // Controller for create new order
@@ -8,12 +8,12 @@ export const addNewOrderController = async(req, res) => {
     return res.status(addNewOrderService.status).json({ response: addNewOrderService });
 };
 
-// Controller for display all orders created by the same user
+// Controller for display all orders and orders created by the same user OR received at the same restaurant OR available to the deliveryman
 export const getAllOrdersController = async (req, res) => {
     const userId = (await findUserId(req)).userId;
     const role = (await findUserId(req)).role;
     const getAllOrdersService = await getAllOrders(userId, role, req.query);
-    return res.status(getAllOrdersService.status).json({ response: getAllOrdersService });
+    return res.status(getAllOrdersService.status).json({ response: getAllOrdersService, message: "no content" });
 };
 
 // Controller for update an order
@@ -45,7 +45,7 @@ export const orderDecisionController = async (req, res) => {
     const { id } = req.params;
     const userId = (await findUserId(req)).userId;
     const status = req.body.status;
-    const orderDecisionService = await orderDecision(id, userId, status);
+    const orderDecisionService = await orderDecisionRestaurant(id, userId, status);
     return res.status(orderDecisionService.status).json({ response: orderDecisionService });
 };
 
@@ -63,6 +63,12 @@ export const decisionOrderController = async (req, res) => {
     const { id } = req.params;
     const userId = ((await findUserId(req)).userId);
     const decision = req.body.decision;
-    const decisionOrderService = await decisionOrder(id, userId, decision);
+    const decisionOrderService = await orderDecisionDeliveryman(id, userId, decision);
     return res.status(decisionOrderService.status).json({ response: decisionOrderService });
+};
+
+// Controller for display all orders accepted to the deliveryman
+export const historyOrdersAccepted = async (req, res) => {
+    const historyOrdersAcceptedService = await getAllOrdersAccepted(req.query);
+    return res.status(historyOrdersAcceptedService.status).json({ response: historyOrdersAcceptedService });
 };

@@ -21,6 +21,10 @@
     {
       "name": "articles",
       "description": "Articles Operations"
+    },
+    {
+      "name": "orders",
+      "description": "Orders Operations"
     }
   ],
   "paths": {
@@ -149,7 +153,7 @@
             "description": "Request user not exist!"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal Server Error!"
           }
         }
       }
@@ -219,7 +223,7 @@
             "description": "Bad request! Email already exist!"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal Server Error!"
           }
         }
       },
@@ -274,7 +278,7 @@
         ],
         "responses": {
           "200": {
-            "description": "succussffully operation",
+            "description": "successfuly operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -312,14 +316,11 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Users not found!"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal Server Error!"
           }
         }
       }
@@ -361,7 +362,7 @@
             "description": "Your account is already validated!"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal Server Error!"
           }
         }
       }
@@ -438,8 +439,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "succussffully operation ",
+          "200": {
+            "description": "successfuly operation ",
             "content": {
               "application/json": {
                 "schema": {
@@ -477,17 +478,11 @@
               }
             }
           },
-          "200": {
-            "description": "Succussffully operation"
-          },
           "204": {
             "description": "There are no unvalidated users!"
           },
           "404": {
             "description": "Users not found!"
-          },
-          "401": {
-            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error!"
@@ -529,8 +524,37 @@
           "404": {
             "description": "User not found!"
           },
-          "401": {
-            "description": "Unauthorized"
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Delete user",
+        "description": "Delete user",
+        "operationId": "DeleteUsers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The user ID that needs to be deleted",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User is successfuly deleted"
+          },
+          "404": {
+            "description": "User not found"
           },
           "500": {
             "description": "Internal Server Error!"
@@ -597,7 +621,7 @@
         }
       }
     },
-    "/article": {
+    "/restaurant/articles": {
       "post": {
         "security": [
           {
@@ -669,6 +693,32 @@
           }
         }
       },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "articles"
+        ],
+        "summary": "Delete all articles created by the same restaurant",
+        "description": "Delete all articles created by the same restaurant",
+        "operationId": "DeleteAllArticles",
+        "responses": {
+          "200": {
+            "description": "Your articles are deleted"
+          },
+          "400": {
+            "description": "Bad request!"
+          },
+          "404": {
+            "description": "You have no articles"
+          }
+        }
+      }
+    },
+    "/articles": {
       "get": {
         "security": [
           {
@@ -678,7 +728,7 @@
         "tags": [
           "articles"
         ],
-        "summary": "Get the list of all articles",
+        "summary": "Get the list of all articles to the customer",
         "description": "Get the list of all articles",
         "operationId": "ListAllArticles",
         "parameters": [
@@ -720,7 +770,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Succussffully operation",
+            "description": "successfuly operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -769,33 +819,9 @@
             "description": "Internal Server Error!"
           }
         }
-      },
-      "delete": {
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "tags": [
-          "articles"
-        ],
-        "summary": "Delete all articles created by the same restaurant",
-        "description": "Delete all articles created by the same restaurant",
-        "operationId": "DeleteAllArticles",
-        "responses": {
-          "200": {
-            "description": "Your articles are deleted"
-          },
-          "400": {
-            "description": "Bad request!"
-          },
-          "404": {
-            "description": "You have no articles"
-          }
-        }
       }
-    },
-    "/article/{id}": {
+    }, 
+    "/articles/{id}": {
       "get": {
         "security": [
           {
@@ -833,7 +859,9 @@
             "description": "Internal Server Error!"
           }
         }
-      },
+      }
+    },
+    "/restaurant/articles/{id}": {
       "put": {
         "security": [
           {
@@ -972,7 +1000,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Article is succussffully deleted"
+            "description": "Article is successfuly deleted"
           },
           "400": {
             "description": "Bad request!"
@@ -986,7 +1014,7 @@
         }
       }
     },
-    "/article/restaurant/myarticles": {
+    "/restaurant/{name}/articles/myarticles": {
       "get": {
         "security": [
           {
@@ -1017,7 +1045,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Succussffully operation",
+            "description": "successfuly operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -1064,7 +1092,551 @@
           }
         }
       }
-    }
+    },
+    "/orders/{id}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add new Order",
+        "description": "Add new Order",
+        "operationId": "AddOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The article ID",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Add new Order",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "numberPieces": {
+                    "type": "integer",
+                    "example": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Article created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "You can change number of pieces",
+        "description": "Change number of pieces",
+        "operationId": "changeNbrPieces",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The order that needs to updated",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Order with new number of pieces",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "numberPieces": {
+                    "type": "integer",
+                    "example": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{
+            "description": "Order updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "numberPieces": {
+                      "type": "integer",
+                      "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Delete order",
+        "description": "Delete order",
+        "operationId": "deleteOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The order that needs to be deleted",
+            "required": true
+          }
+        ], 
+        "responses": {
+          "200": {
+            "description": "Order is successfully deleted"
+          },
+          "400": {
+            "description": "Bad request!"
+          },
+          "404": {
+            "description": "Order not found!"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all orders and orders created by the same user OR received at the same restaurant OR available to the deliveryman",
+        "description": "Get all orders and orders created by the same user OR received at the same restaurant OR available to the deliveryman",
+        "operationId": "getAllOrders",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of orders per page",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "sortBy (fill in by admin)",
+            "in": "query",
+            "description": "Field to sort by",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "createdAtBefore (fill in by admin)",
+            "in": "query",
+            "description": "Filter orders created before this date (YYYY-MM-DD format)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "createdAtAfter (fill in by admin)",
+            "in": "query",
+            "description": "Filter orders created after this date (YYYY-MM-DD format)",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "exemple": true
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "listOrders": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "orders": {
+                      "type": "array",
+                      "example": [
+                        {
+                        "_id": "66aa509cbe3698c873106862",
+                        "articleId": "666b776b78b0808b9a7d8d70",
+                        "clientId": "666b76561c55c46db252635f",
+                        "restaurantId": "666b769c464843e905f67165",
+                        "restaurantStatus": null,
+                        "deliverymanStatus": false,
+                        "orderStatus": false,
+                        "numberPieces": 1,
+                        "pricePieces": 9000,
+                        "priceOrder": 9000,
+                        "createdAt": "2024-07-31T14:56:28.211Z",
+                        "updatedAt": "2024-07-31T14:56:28.211Z",
+                        "__v": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No orders yet in this period"
+          },
+          "404": {
+            "description": "Orders not found!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Delete all orders created by the same customer",
+        "description": "Delete all orders created by the same customer",
+        "operationId": "deleteOrdersCustomer",
+        "responses": {
+          "200": {
+            "description": "All your orders are deleted"
+          },
+          "404": {
+            "description": "You have not yet an order!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      }
+    },
+    "/orders/restaurant/{id}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Make the order decision by the restaurant",
+        "description": "Make the order decision by the restaurant",
+        "operationId": "orderDecisionRestaurant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The order that needs to answer",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Decision of order",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Your answer is sent successfully"
+          },
+          "404": {
+            "description": "Order not found!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Change the order decision by the restaurant",
+        "description": "Change the order decision by the restaurant",
+        "operationId": "changeOrderDecision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The order that needs to change the decision",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Change decision of order",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Your answer is sent successfully"
+          },
+          "400": {
+            "description": "Your cannot change your decision!"
+          },
+          "404": {
+            "description": "Order not found!"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      }
+    },
+    "/orders/deliveryman/{id}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Make the order decision by the deliveryman",
+        "description": "Make the order decision by the deliveryman",
+        "operationId": "orderDecisionDeliveryman",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The order that needs to answer",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Decision of order",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Your answer is sent successfully"
+          },
+          "404": {
+            "description": "There are no orders available yet"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      }
+    } ,
+    "/orders/deliveryman/history": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get the history of orders accepted",
+        "description": "Get the history of orders accepted",
+        "operationId": "historyOrdersAccepted",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of orders accepted per page",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "createdAtBefore",
+            "in": "query",
+            "description": "Filter history created before this date (YYYY-MM-DD format)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "createdAtAfter",
+            "in": "query",
+            "description": "Filter history created after this date (YYYY-MM-DD format)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "exemple": true
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "listOrders": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "orders": {
+                      "type": "array",
+                      "example": [
+                        {
+                        "_id": "66aa509cbe3698c873106862",
+                        "articleId": "666b776b78b0808b9a7d8d70",
+                        "clientId": "666b76561c55c46db252635f",
+                        "restaurantId": "666b769c464843e905f67165",
+                        "restaurantStatus": true,
+                        "deliverymanStatus": true,
+                        "orderStatus": true,
+                        "numberPieces": 1,
+                        "pricePieces": 9000,
+                        "priceOrder": 9000,
+                        "createdAt": "2024-07-31T14:56:28.211Z",
+                        "updatedAt": "2024-07-31T14:56:28.211Z",
+                        "__v": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "There are no orders accepted"
+          },
+          "500": {
+            "description": "Internal Server Error!"
+          }
+        }
+      }
+    } 
   },
   "components": {
     "schemas": {
@@ -1158,6 +1730,59 @@
           "information": {
             "type": "string",
             "example": "all information about this article"
+          }
+        }
+      },
+      "Order": {
+        "required": [
+          "articleId",
+          "clientId",
+          "restaurantId",
+          "numberPieces",
+          "pricePieces",
+          "priceOrder"
+        ],
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "example": "66063369f5a2397ad3b4fa5d"
+          },
+          "clientId": {
+            "type": "string",
+            "example": "66063369f5a2397ad3b4fa5d"
+          },
+          "restaurantId": {
+            "type": "string",
+            "example": "66063369f5a2397ad3b4fa5d"
+          },
+          "deliverymanId": {
+            "type": "string",
+            "example": "66063369f5a2397ad3b4fa5d"
+          },
+          "restaurantStatus": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "deliverymanStatus": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "orderStatus": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "numberPieces": {
+            "type": "integer",
+            "example": 1
+          },
+          "pricePieces": {
+            "type": "integer",
+            "example": 1
+          },
+          "priceOrder": {
+            "type": "integer",
+            "example": 10
           }
         }
       }

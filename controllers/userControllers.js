@@ -1,9 +1,5 @@
-import { config } from "dotenv";
 import { requestPasswordReset, resetPassword } from "../services/passwordService.js";
 import { register, listUsers, userById, changePassword, validationAccountClientService, confirmAccount, listUsersUnvalidated, loginUserService, deleteUser } from "../services/userService.js";
-
-
-config();
 
 // Controller for Register new user
 export const signUpController = async (req, res) => {

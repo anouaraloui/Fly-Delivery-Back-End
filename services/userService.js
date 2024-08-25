@@ -224,7 +224,8 @@ export const changePassword = async (actualPassword, newPassword, confirmPasswor
 export const deleteUser = async(id) => {
     try {
      const user = await User.findByIdAndDelete({ _id: id });
-     return { status: 200, success: true, message: `${user.name} is successfully deleted` };
+     if(!user) return { status: 404, success: false, message: "User not found!"};
+     else return { status: 200, success: true, message: `${user.name} is successfully deleted` };
     } catch (error) {
         return { status: 500, success: false, message: error.message };
     };       

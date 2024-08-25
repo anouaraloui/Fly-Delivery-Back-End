@@ -8,7 +8,7 @@ import { validatorId } from "../middlewares/idValidator.js";
 const router = express.Router();
 
 // Route for create a new article
-router.post('/restaurant/article', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
+router.post('/restaurant/articles', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
 validateArticle, createArticleController);
 
 // Route for display all articles to the customer
@@ -24,11 +24,11 @@ router.get('articles/:id', isAuth, (req, res, next) => role(['Admin', 'Restauran
 getAticleByIdController);
 
 // Route to update an article
-router.put('/restaurant/articles/:id', isAuth, (req, res, next) => role([ 'Restaurant' ], req, res, next), 
-validatorId, updateArticleController);
+router.put('/restaurant/articles/:id', isAuth, validatorId, (req, res, next) => role([ 'Restaurant' ], req, res, next), 
+ updateArticleController);
 
 // Route for delete an article
-router.delete('/restaurant/articles/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
+router.delete('/restaurant/articles/:id', isAuth, validatorId, (req, res, next) => role(['Restaurant'], req, res, next),
 deleteArticleController);
 
 // Route to delete all articles created by the same restaurant

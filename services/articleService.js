@@ -100,18 +100,18 @@ export const updateArticle = async (id, userId, data) => {
 export const deleteArticle = async (id, restaurant) => {
     return await Article.findById(id).where('restaurantId').equals(restaurant)
         .then(async article => {
-            if (!article) return { status: 404, succes: false, message: 'Article not found!' };
+            if (!article) return { status: 404, success: false, message: 'Article not found!' };
             else {
                 const restaurant = article.restaurantId;
-                if (restaurant != restaurant) return { status: 401, succes: false, message: 'Unauthorized! Invalid token' };
+                if (restaurant != restaurant) return { status: 401, success: false, message: 'Unauthorized! Invalid token' };
                 else    {
                     await Article.findByIdAndDelete(id);
-                    return { status: 200, succes: true, message: 'Article is deleted' };
+                    return { status: 200, success: true, message: 'Article is deleted' };
                 };
             };
         })
         .catch(err => {
-            return { status: 400, succes: false, message: err.message }
+            return { status: 400, success: false, message: err.message }
         });
 };
 
@@ -119,13 +119,13 @@ export const deleteArticle = async (id, restaurant) => {
 export const deleteAllArticles = async (restaurantId) => {
     return await Article.find({ restaurantId: restaurantId})
     .then(async article => {
-        if(!article || article.length == 0) return { status: 404, succes: false, message: 'You have no articles!' };
+        if(!article || article.length == 0) return { status: 404, success: false, message: 'You have no articles!' };
         else {
             await Article.deleteMany({ restaurantId: restaurantId });
-            return { status: 200, succes: true, message: 'Your articles are deleted' } ;
+            return { status: 200, success: true, message: 'Your articles are deleted' } ;
         };
     })
     .catch(err => {
-        return { status: 400, succes: false, message: err.message };
+        return { status: 400, success: false, message: err.message };
     });
 };

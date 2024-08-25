@@ -20,7 +20,7 @@ app.use(express.json());
 config();
 connectDB();
 
-app.use('/api-swagger-test', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-swagger-fly-delivery', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(userRoutes);
 app.use(articleRoutes);
 app.use(orderRoutes);

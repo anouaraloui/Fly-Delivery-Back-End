@@ -5,16 +5,16 @@ config()
 
 // Configuration nodemailer
 const transport = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
-    auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-    },
+    host: "smtp.gmail.com",
     port: 587,
-    secure: false,
     tls: {
-        rejectUnauthorized: false
-    }
+        rejectUnauthorized: false,
+        minVersion: "TLSv1.2"
+    },
+    auth: {
+        user: process.env.EMAIL_NODEMAILER,
+        pass: process.env.PASSWORD_NODEMAILER
+    },
 });
 
 //  Email for admin when created the first time
