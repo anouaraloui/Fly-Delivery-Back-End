@@ -11,6 +11,7 @@ const transport = nodemailer.createTransport({
         rejectUnauthorized: false,
         minVersion: "TLSv1.2"
     },
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_NODEMAILER,
         pass: process.env.PASSWORD_NODEMAILER
@@ -20,7 +21,7 @@ const transport = nodemailer.createTransport({
 //  Email for admin when created the first time
 const welcomeAdmin = (email, name, password) => {
     transport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_NODEMAILER,
         to: email,
         subject: "Welcome Admin to your application",
         html: `<div>
@@ -38,7 +39,7 @@ const welcomeAdmin = (email, name, password) => {
 // Email for user when to forget password
 const emailForgotPassword = (email, name, token, userId) => {
     transport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_NODEMAILER,
         to: email,
         subject: "Reset Password",
         html: `<div>
@@ -60,7 +61,7 @@ const emailForgotPassword = (email, name, token, userId) => {
 // Email for user to reset password
 const emailResetPassword = (email, name) => {
     transport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_NODEMAILER,
         to: email,
         subject: "Password change confirmation",
         html: `<div>
@@ -78,7 +79,7 @@ const emailResetPassword = (email, name) => {
 // Email to the user when registering for this application
 const welcome = (email, name) => {
     transport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_NODEMAILER,
         to: email,
         subject: "Welcome our application",
         html: `<div>
@@ -96,7 +97,7 @@ const welcome = (email, name) => {
 // Email to user when changing password
 const welcomeBack = (email, name) => {
     transport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_NODEMAILER,
         to: email,
         subject: 'Welcome back to our team',
         html: `<div>
@@ -114,7 +115,7 @@ const welcomeBack = (email, name) => {
 // Email to the user to validate the account
 const validationAccount = (email, name, token, userId) => {
     transport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_NODEMAILER,
         to: email,
         subject: 'Validation your account',
         html: `<div>
@@ -129,4 +130,74 @@ const validationAccount = (email, name, token, userId) => {
     });
 };
 
-export { welcomeAdmin, emailForgotPassword, emailResetPassword, welcome, welcomeBack, validationAccount };
+// Email for the payement
+const payOrderEmailTemplate = (email, order) => {
+    transport.sendMail({
+        from: process.env.EMAIL_NODEMAILER,
+        to: email,
+        subject: "Thanks for shopping with us",
+        html: `<div>
+         <p>
+    Hi ${order.shippingAddress.fullName},</p>
+    <p>We have finished processing your order.</p>
+    <h2>[Order ${order._id}] (${order.createdAt.toString().substring(0, 10)})</h2>
+    <table>
+    <thead>
+    <tr>
+    <td colspan="2"><strong>Product</strong></td>
+    <td ><strong align="right">Price</strong></td>
+    </thead>
+    <tbody>
+    ${order.orderItems
+            .map(
+                (item) => `
+      <tr>
+      <td colspan="2">${item.name}</td>
+      <td align="right"> $${item.price.toFixed(2)}</td>
+      </tr>
+    `
+            )
+            .join('\n')}
+    </tbody>
+    <tfoot>
+    <tr>
+    <td colspan="2">Items Price:</td>
+    <td align="right"> $${order.itemsPrice.toFixed(2)}</td>
+    </tr>
+    <tr>
+    <td colspan="2">Shipping Price:</td>
+    <td align="right"> $${order.shippingPrice.toFixed(2)}</td>
+    </tr>
+    <tr>
+    <td colspan="2">Quantity:</td>
+    <td align="right"> $${order.numberOfPieces.toFixed(2)}</td>
+    </tr>
+    <tr>
+    <td colspan="2"><strong>Total Price:</strong></td>
+    <td align="right"><strong> $${order.totalPrice.toFixed(2)}</strong></td>
+    </tr>
+    <tr>
+    <td colspan="2">Payment Method:</td>
+    <td align="right">${order.paymentMethod}</td>
+    </tr>
+    </table>
+  
+    <h2>Shipping address</h2>
+    <p>
+    ${order.shippingAddress.fullName},<br/>
+    ${order.shippingAddress.address},<br/>
+    ${order.shippingAddress.city},<br/>
+    ${order.shippingAddress.country},<br/>
+    ${order.shippingAddress.postalCode}<br/>
+    </p>
+    <hr/>
+    <p>
+    Thanks for shopping with us.
+    </p>
+        </div>
+        `
+    });
+   
+};
+
+export { welcomeAdmin, emailForgotPassword, emailResetPassword, welcome, welcomeBack, validationAccount, payOrderEmailTemplate };

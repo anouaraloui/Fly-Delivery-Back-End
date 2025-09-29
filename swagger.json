@@ -1636,6 +1636,85 @@
           }
         }
       }
+    },
+    "/orders/pay/{id}": {
+        "patch": {
+            "security": [
+                {
+                    "Bearer": []
+                }
+            ],
+            "tags": [
+                "orders"
+            ],
+            "summary": "Payed the order by the customer",
+            "description": "Payed the order by the customer",
+            "operationId": "paymentCustomer",
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "The order that the customer is to be paid for",
+                    "required": true
+                }
+            ],
+            "requestBody": {
+                "description": "Confrim the payment",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "paid"
+                                },
+                                "email_address": {
+                                    "type": "string",
+                                    "example": "customer@email.com"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Successful operation ",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {
+                                        "type": "number",
+                                        "example": 200
+                                    },
+                                    "success": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Paid Order!"
+                                    },
+                                    "order": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Order"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Order not found!"
+                },
+                "500": {
+                    "description": "Internal Server Error!"
+                }
+            }
+        }
     } 
   },
   "components": {
@@ -1740,7 +1819,9 @@
           "restaurantId",
           "numberPieces",
           "pricePieces",
-          "priceOrder"
+          "priceOrder",
+          "shippingPrice",
+          "taxPrice"
         ],
         "type": "object",
         "properties": {
@@ -1766,11 +1847,11 @@
           },
           "deliverymanStatus": {
             "type": "boolean",
-            "example": "false"
+            "example": "true"
           },
           "orderStatus": {
             "type": "boolean",
-            "example": "false"
+            "example": "true"
           },
           "numberPieces": {
             "type": "integer",
@@ -1783,6 +1864,110 @@
           "priceOrder": {
             "type": "integer",
             "example": 10
+          },
+          "shippingAddress": {
+              "required": [
+                  "fullName",
+                  "address",
+                  "phone",
+                  "city",
+                  "postalCode",
+                  "country"
+              ],
+              "type": "object",
+              "properties": {
+                  "fullName": {
+                      "type": "string",
+                      "example": "Full Name"
+                  },
+                  "address": {
+                      "type": "string",
+                      "example": "Full Adress"
+                  },
+                  "phone": {
+                      "type": "number",
+                      "example": 1234567890
+                  },
+                  "city": {
+                      "type": "string",
+                      "example": "Tunis"
+                  },
+                  "postalCode": {
+                      "type": "string",
+                      "example": "1000"
+                  },
+                  "country": {
+                      "type": "string",
+                      "example": "Tunisia"
+                  },
+                  "location": {
+                      "type": "object",
+                      "properties": {
+                          "lat": {
+                              "type": "number",
+                              "example": 40.7128
+                          },
+                          "lng": {
+                              "type": "number",
+                              "example": -74.0060
+                          },
+                          "address": {
+                              "type": "string",
+                              "example": "Tunis, Tunisia"
+                          },
+                          "name": {
+                              "type": "string",
+                              "example": "Home"
+                          },
+                          "vicinity": {
+                              "type": "string",
+                              "example": "Near Central Park"
+                          },
+                          "googleAddressId": {
+                              "type": "string",
+                              "example": "ChIJOwg_06VPwokRYv534QaPC8g"
+                          }
+                      }
+                  }
+              },
+              "paymentMethod": {
+                  "type": "string",
+                  "example": "Cash"
+              },
+              "isPaid": {
+                  "type": "boolean",
+                  "example": true
+              },
+              "isDelivered": {
+                  "type": "boolean",
+                  "example": false
+              },
+              "paymentResult": {
+                  "type": "object",
+                  "properties": {
+                      "id": {
+                          "type": "string",
+                          "example": "PAYID-LXHD6RQ4J5374582K7514701"
+                      },
+                      "status": {
+                          "type": "string",
+                          "example": "Completed"
+                      },
+                      "update_time": {
+                          "type": "string",
+                          "example": "2023-08-17T12:34:56Z"
+                      },
+                      "email_address": {
+                          "type": "string",
+                          "example": "example@example.com"
+                      },
+                      "paidAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-08-17T14:00:00Z"
+                      }
+                  }
+              }
           }
         }
       }

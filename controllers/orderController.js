@@ -1,4 +1,4 @@
-import { addNewOrder, changeOrderDecision,  orderDecisionDeliveryman, orderDecisionRestaurant, deleteAllOrders, deleteOrder, getAllOrders,  updateOrder, getAllOrdersAccepted } from "../services/orderService.js";
+import { addNewOrder, changeOrderDecision,  orderDecisionDeliveryman, orderDecisionRestaurant, deleteAllOrders, deleteOrder, getAllOrders,  updateOrder, getAllOrdersAccepted, isPaid } from "../services/orderService.js";
 import findUserId from "../utils/findUserId.js";
 
 // Controller for create new order
@@ -71,4 +71,12 @@ export const decisionOrderController = async (req, res) => {
 export const historyOrdersAccepted = async (req, res) => {
     const historyOrdersAcceptedService = await getAllOrdersAccepted(req.query);
     return res.status(historyOrdersAcceptedService.status).json({ response: historyOrdersAcceptedService });
+};
+
+// Controller for ther payment
+export const isPaidController = async (req, res) => {
+    const {id} = req.params;
+    const user = ((await findUserId(req)).userId);
+    const isPaidService = await isPaid(id, user, req.body);
+    return res.status(isPaidService.status).json({ response: isPaidService });
 };

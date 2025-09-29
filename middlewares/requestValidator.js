@@ -15,7 +15,6 @@ export const ValidateRequestRegister = [
         .isIn(['Admin', 'Restaurant', 'Deliveryman', 'Customer']).withMessage('Role is required!'),
     body('phone').notEmpty().withMessage('Phone is required')
     .isMobilePhone().isMobilePhone('ar-TN').withMessage('Phone number should be 8 digits'),
-    body('adress').optional(),
     body('avatar').optional(),
     body('validationCode').optional(),
 
@@ -52,4 +51,21 @@ export const validateArticle = [
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
         next();
     }    
+];
+
+// Create new Order
+export const createOrderValidator = [
+    body('shippingAddress.fullName').notEmpty().withMessage('Your Full Name is required!').isLength({min:1}).isString(),
+    body('shippingAddress.address').notEmpty().withMessage('Your Adress is required!'),
+    body('shippingAddress.phone').notEmpty().isMobilePhone('ar-TN').withMessage('Phone is required!'),
+    body('shippingAddress.city').notEmpty().withMessage('Your City is required!'),
+    body('shippingAddress.postalCode').notEmpty().withMessage('Your postalCode Name is required!'),
+    body('shippingAddress.country').notEmpty().withMessage('Your country is required!'),
+    body('pricePieces').notEmpty().isDecimal().withMessage('Item Price is required!'),
+    body('numberOfPieces').notEmpty().isNumeric().withMessage('Number of Pieces is required!'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        else return next();
+    }
 ];

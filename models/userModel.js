@@ -10,7 +10,7 @@ let userSchema= new Schema(
     {
         name: {
             type: String,
-        required: true
+            required: true
         },
         email: {
             type: String,
@@ -28,10 +28,6 @@ let userSchema= new Schema(
         },
         phone: {
             type: Number,
-            required: true
-        },
-        adress: {
-            type: String,
             required: true
         },
         avatar: {

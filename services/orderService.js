@@ -1,6 +1,7 @@
 import Article from "../models/articleModel.js";
 import Order from "../models/orderModel.js";
 import OrdersAccepted from "../models/orderAcceptedModel.js";
+import { payOrderEmailTemplate } from "../middlewares/nodemailer.js";
 
 // Service for create new order
 export const addNewOrder = async (article, userId, data) => {
@@ -44,7 +45,8 @@ export const addNewOrder = async (article, userId, data) => {
                             restaurantId: order.restaurantId,
                             numberPieces: data.numberPieces,
                             pricePieces: order.price,
-                            priceOrder: order.price * data.numberPieces
+                            priceOrder: order.price * data.numberPieces,
+                            shippingAddress: data.shippingAddress
                         });
                         await order.save();
                         return { status: 201, success: true, message: 'Order created', order: order };
@@ -244,7 +246,6 @@ export const orderDecisionDeliveryman = async (id, userId, decision) => {
                 articleId: order.articleId,
                 clientId: order.clientId,
                 restaurantId: order.restaurantId,
-                orderStatus: true,
                 numberPieces: order.numberPieces,
                 pricePieces: order.pricePieces,
                 priceOrder: order.priceOrder
@@ -274,4 +275,28 @@ export const getAllOrdersAccepted = async (data) => {
     } catch (error) {
         return { status: 500, success: false, message: error.message };
     };
+};
+
+// Service for the payement
+export const isPaid = async (id, user, data) => {
+    return await Order.findById(id).where('user').equals(user).where('deliverymanStatus').equals(true).exec()
+        .then(async (order) => {
+            if (!order) return { status: 404, success: true, message: 'Order not found!' };
+            else {
+                order.isPaid = true;
+                order.paidAt = Date.now();
+                order.orderStatus = true;
+                order.paymentResult = {
+                    id: user,
+                    status: data.status,
+                    update_time: Date.now(),
+                    email_address: data.email_address
+                };
+                const paidOrder = await order.save();
+                payOrderEmailTemplate(data.email_address, order);
+                return { status: 200, success: true, message: "Paid Order!", order: paidOrder };
+            }
+        }).catch((err) => {
+            return { status: 500, success: false, message: err.message };
+        });
 };

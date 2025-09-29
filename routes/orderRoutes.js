@@ -1,7 +1,7 @@
 import express from "express";
 import { role } from "../middlewares/checkRole.js";
 import isAuth from "../middlewares/auth.js";
-import { addNewOrderController, changeOrderDecisionController, decisionOrderController, deleteAllOrdersController, deleteOrderController, getAllOrdersController, historyOrdersAccepted, orderDecisionController, updateOrderController } from "../controllers/orderController.js";
+import { addNewOrderController, changeOrderDecisionController, decisionOrderController, deleteAllOrdersController, deleteOrderController, getAllOrdersController, historyOrdersAccepted, isPaidController, orderDecisionController, updateOrderController } from "../controllers/orderController.js";
 import checkArticle from "../middlewares/checkArticle.js";
 import { validatorId } from "../middlewares/idValidator.js";
 
@@ -20,27 +20,32 @@ router.patch('/orders/:id', isAuth, (req, res, next) => role(['Admin', 'Customer
 updateOrderController);
 
 // Route for delete an order
-router.delete('/orders/:id', isAuth, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
-validatorId, deleteOrderController);
+router.delete('/orders/:id', isAuth, validatorId, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
+deleteOrderController);
 
 // Route for remove all orders created by the same client
-router.delete('/orders', isAuth, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
+router.delete('/orders', isAuth, validatorId, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
 deleteAllOrdersController);
 
 // Route to make the order decision by the restaurant
-router.post('/orders/restaurant/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
-validatorId, orderDecisionController);
+router.post('/orders/restaurant/:id', isAuth, validatorId, (req, res, next) => role(['Restaurant'], req, res, next),
+orderDecisionController);
 
 // Route to change the order decision by the restaurant
-router.patch('/orders/restaurant/:id', isAuth, (req, res, next) => role(['Restaurant'], req, res, next),
-validatorId, changeOrderDecisionController);
+router.patch('/orders/restaurant/:id', isAuth, validatorId, (req, res, next) => role(['Restaurant'], req, res, next),
+changeOrderDecisionController);
 
 // Route for accept or reject an order by the deliveryman
-router.post('/orders/deliveryman/:id', isAuth, (req, res, next) => role(['Deliveryman'], req, res, next),
-validatorId, decisionOrderController);
+router.post('/orders/deliveryman/:id', isAuth, validatorId, (req, res, next) => role(['Deliveryman'], req, res, next),
+decisionOrderController);
 
 // Route for display all orders accepted to the deliveryman
-router.get('/orders/deliveryman/history', isAuth, (req, res, next) => role(['Deliveryman'], req, res, next),
+router.get('/orders/deliveryman/history', isAuth, validatorId, (req, res, next) => role(['Deliveryman'], req, res, next),
 historyOrdersAccepted);
+
+// Route for the payement
+router.patch('/orders/pay/:id', isAuth, validatorId, (req, res, next) => role(['Admin', 'Customer'], req, res, next),
+isPaidController);
+
 
 export default router;

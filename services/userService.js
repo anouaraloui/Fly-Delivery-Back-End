@@ -69,9 +69,7 @@ export const register = async (data) => {
     return await User.findOne({ $or: [{ email: data.email }, { phone: data.phone }] })
         .then(async user => {
             if (user) {
-                if (user.email === data.email && user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Email and Phone already exists!' };
-                if (user.email === data.email) return { status: 400, success: false, message: 'Bad request! Email already exists!' };
-                if (user.phone === data.phone) return { status: 400, success: false, message: 'Bad request! Phone already exists!' };
+                if ((user.email === data.email) || (user.phone === data.phone )) return { status: 400, success: false, message: 'Bad request! Email or Phone already exists!' };
             } else {
                 user = new User({ ...data, avatar: data.avatar || '', validationCode: codeValidationAccount });
                 const token = jwt.sign(
@@ -82,16 +80,14 @@ export const register = async (data) => {
                         name: user.name
                     },
                     process.env.VALIDATION_TOKEN,
-                    { expiresIn: '48h' },
-
+                    { expiresIn: '48h' }
                 );
                 if (data.role === "Customer") {
                     validationAccount(user.email, user.name, token, user._id);
-                    console.log("token for validation account: ", token);
                 };
                 await user.save();
                 return { status: 201, success: true, message: "User created", user: data };
-            }
+            };
         })
         .catch(error => {
             return { status: 500, success: false, message: error.message };
